@@ -1,3 +1,15 @@
+# steps
+
+1) npx create-react-app my-app
+2) npm i @nextui-org/theme @nextui-org/system framer-motion
+3) npm i @nextui-org/button
+4) npm install -D tailwindcss
+5) use nextui in your component how in app.js (first commit)
+6) add @tailwind in index.css
+7) add tailwind.config.js (first commit)
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

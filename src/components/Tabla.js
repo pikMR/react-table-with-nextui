@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { DeleteIcon } from "./icons/DeleteIcon";
 import { EditIcon } from "./icons/EditIcon";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Input } from "@nextui-org/input";
+import { parseDate } from "@internationalized/date";
 import {
   Table,
   TableHeader,
@@ -13,50 +14,92 @@ import {
 } from "@nextui-org/table";
 
 const Tabla = ({ children }) => {
+  const [editMode, setEditMode] = useState({});
+  const toggleEditMode = (rowKey) => {
+    setEditMode((prevEditMode) => ({
+      ...prevEditMode,
+      [rowKey]: !prevEditMode[rowKey],
+    }));
+  };
+  const handleEditClick = (rowKey) => {
+    console.log('rowkey: ' + rowKey)
+    toggleEditMode(rowKey);
+  };
   const datos = typeof children === "object" ? children : {};
 
   return (
     <Table aria-label="Example static collection table">
       <TableHeader>
-        <TableColumn>NAME</TableColumn>
-        <TableColumn>ROLE</TableColumn>
-        <TableColumn>STATUS</TableColumn>
+        <TableColumn>Fecha</TableColumn>
+        <TableColumn>Descripcion</TableColumn>
+        <TableColumn>Sucursal</TableColumn>
+        <TableColumn>Detalle</TableColumn>
+        <TableColumn>Saldo</TableColumn>
         <TableColumn>ACCIONES</TableColumn>
       </TableHeader>
       <TableBody>
         <TableRow key="1">
           <TableCell>
             <Input
-              type="text"
+              isReadOnly
+              type="date"
               variant="bordered"
-              defaultValue={datos.name}
+              defaultValue={parseDate(datos.fecha)}
               className="max-w-xs"
             />
           </TableCell>
           <TableCell>
             <Input
+              isReadOnly
               type="text"
               variant="bordered"
-              defaultValue={datos.role}
+              defaultValue={datos.descripcion}
               className="max-w-xs"
             />
           </TableCell>
           <TableCell>
             <Input
+              isReadOnly
               type="text"
               variant="bordered"
-              defaultValue={datos.status}
+              defaultValue={datos.sucursal}
               className="max-w-xs"
+            />
+          </TableCell>
+          <TableCell>
+            <Input
+              isReadOnly
+              type="text"
+              variant="bordered"
+              defaultValue={datos.detalle}
+              className="max-w-xs"
+            />
+          </TableCell>
+          <TableCell>
+            <Input
+              isReadOnly
+              type="number"
+              variant="bordered"
+              defaultValue={datos.saldo}
+              className="max-w-xs"
+              startContent={
+                <div className="pointer-events-none flex items-center">
+                  <span className="text-default-400 text-small">$</span>
+                </div>
+              }
             />
           </TableCell>
           <TableCell>
             <div className="relative flex items-center gap-2">
-              <Tooltip content="Edit user">
-                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <Tooltip content="Editar Extracto">
+                <span
+                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                  onClick={() => handleEditClick(1)}
+                >
                   <EditIcon />
                 </span>
               </Tooltip>
-              <Tooltip color="danger" content="Delete user">
+              <Tooltip color="danger" content="Eliminar Extracto">
                 <span className="text-lg text-danger cursor-pointer active:opacity-50">
                   <DeleteIcon />
                 </span>
@@ -67,36 +110,65 @@ const Tabla = ({ children }) => {
         <TableRow key="2">
           <TableCell>
             <Input
-              type="text"
+              isReadOnly
+              type="date"
               variant="bordered"
-              defaultValue={datos.name}
+              defaultValue={parseDate(datos.fecha)}
               className="max-w-xs"
             />
           </TableCell>
           <TableCell>
             <Input
+              isReadOnly
               type="text"
               variant="bordered"
-              defaultValue={datos.role}
+              defaultValue={datos.descripcion}
               className="max-w-xs"
             />
           </TableCell>
           <TableCell>
             <Input
+              isReadOnly
               type="text"
               variant="bordered"
-              defaultValue={datos.status}
+              defaultValue={datos.sucursal}
               className="max-w-xs"
+            />
+          </TableCell>
+          <TableCell>
+            <Input
+              isReadOnly
+              type="text"
+              variant="bordered"
+              defaultValue={datos.detalle}
+              className="max-w-xs"
+            />
+          </TableCell>
+          <TableCell>
+            <Input
+              isReadOnly
+              type="number"
+              variant="bordered"
+              defaultValue={datos.saldo}
+              className="max-w-xs"
+              startContent={
+                <div className="pointer-events-none flex items-center">
+                  <span className="text-default-400 text-small">$</span>
+                </div>
+              }
             />
           </TableCell>
           <TableCell>
             <div className="relative flex items-center gap-2">
-              <Tooltip content="Edit user">
-                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <Tooltip content="Editar Extracto">
+                <span
+                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                  onClick={() => handleEditClick(2)}
+                >
                   <EditIcon />
                 </span>
               </Tooltip>
-              <Tooltip color="danger" content="Delete user">
+              <Tooltip color="danger" content="Eliminar Extracto">
                 <span className="text-lg text-danger cursor-pointer active:opacity-50">
                   <DeleteIcon />
                 </span>
@@ -107,36 +179,65 @@ const Tabla = ({ children }) => {
         <TableRow key="3">
           <TableCell>
             <Input
-              type="text"
+              isReadOnly
+              type="date"
               variant="bordered"
-              defaultValue={datos.name}
+              defaultValue={parseDate(datos.fecha)}
               className="max-w-xs"
             />
           </TableCell>
           <TableCell>
             <Input
+              isReadOnly
               type="text"
               variant="bordered"
-              defaultValue={datos.role}
+              defaultValue={datos.descripcion}
               className="max-w-xs"
             />
           </TableCell>
           <TableCell>
             <Input
+              isReadOnly
               type="text"
               variant="bordered"
-              defaultValue={datos.status}
+              defaultValue={datos.sucursal}
               className="max-w-xs"
+            />
+          </TableCell>
+          <TableCell>
+            <Input
+              isReadOnly
+              type="text"
+              variant="bordered"
+              defaultValue={datos.detalle}
+              className="max-w-xs"
+            />
+          </TableCell>
+          <TableCell>
+            <Input
+              isReadOnly
+              type="number"
+              variant="bordered"
+              defaultValue={datos.saldo}
+              className="max-w-xs"
+              startContent={
+                <div className="pointer-events-none flex items-center">
+                  <span className="text-default-400 text-small">$</span>
+                </div>
+              }
             />
           </TableCell>
           <TableCell>
             <div className="relative flex items-center gap-2">
-              <Tooltip content="Edit user">
-                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <Tooltip content="Editar Extracto">
+                <span
+                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                  onClick={() => handleEditClick(3)}
+                >
                   <EditIcon />
                 </span>
               </Tooltip>
-              <Tooltip color="danger" content="Delete user">
+              <Tooltip color="danger" content="Eliminar Extracto">
                 <span className="text-lg text-danger cursor-pointer active:opacity-50">
                   <DeleteIcon />
                 </span>
@@ -147,36 +248,68 @@ const Tabla = ({ children }) => {
         <TableRow key="4">
           <TableCell>
             <Input
-              type="text"
+              isReadOnly
+              type="date"
               variant="bordered"
-              defaultValue={datos.name}
+              defaultValue={parseDate(datos.fecha)}
               className="max-w-xs"
             />
           </TableCell>
           <TableCell>
             <Input
+              isReadOnly
               type="text"
               variant="bordered"
-              defaultValue={datos.role}
+              defaultValue={datos.descripcion}
               className="max-w-xs"
             />
           </TableCell>
           <TableCell>
             <Input
+              isReadOnly
               type="text"
               variant="bordered"
-              defaultValue={datos.status}
+              defaultValue={datos.sucursal}
               className="max-w-xs"
+            />
+          </TableCell>
+          <TableCell>
+            <Input
+              isReadOnly
+              type="text"
+              variant="bordered"
+              defaultValue={datos.detalle}
+              className="max-w-xs"
+            />
+          </TableCell>
+          <TableCell>
+            <Input
+              isReadOnly
+              type="number"
+              variant="bordered"
+              defaultValue={datos.saldo}
+              className="max-w-xs"
+              startContent={
+                <div className="pointer-events-none flex items-center">
+                  <span className="text-default-400 text-small">$</span>
+                </div>
+              }
             />
           </TableCell>
           <TableCell>
             <div className="relative flex items-center gap-2">
-              <Tooltip content="Edit user">
-                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <Tooltip
+                content="Editar Extracto"
+                onClick={() => handleEditClick(4)}
+              >
+                <span
+                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                  onClick={() => handleEditClick(4)}
+                >
                   <EditIcon />
                 </span>
               </Tooltip>
-              <Tooltip color="danger" content="Delete user">
+              <Tooltip color="danger" content="Eliminar Extracto">
                 <span className="text-lg text-danger cursor-pointer active:opacity-50">
                   <DeleteIcon />
                 </span>

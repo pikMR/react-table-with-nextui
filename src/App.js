@@ -27,9 +27,11 @@ function App() {
                   <CardBody>
                     <Tabla>
                       {{
-                        name: "Jose ignacio",
-                        role: "arquitect",
-                        status: "ok",
+                        fecha: "2021-12-25",
+                        descripcion: "Pago abono pedido motos suzuki N",
+                        sucursal: "SABANA",
+                        detalle: "SABANA DE TORRES",
+                        saldo: 19030,
                       }}
                     </Tabla>
                   </CardBody>
@@ -40,9 +42,11 @@ function App() {
                   <CardBody>
                     <Tabla>
                       {{
-                        name: "Francisco josé",
-                        role: "gigolo",
-                        status: "ko",
+                        fecha: "2022-10-15",
+                        descripcion: "Compra SOI - PCSS",
+                        sucursal: "ARAUCA",
+                        detalle: "amalia",
+                        saldo: -300,
                       }}
                     </Tabla>
                   </CardBody>
@@ -53,9 +57,11 @@ function App() {
                   <CardBody>
                     <Tabla>
                       {{
-                        name: "paco fernandez",
-                        role: "barrendero",
-                        status: "ok",
+                        fecha: "2023-07-18",
+                        descripcion: "Cuota de manejo",
+                        sucursal: "LEBRIJA",
+                        detalle: "",
+                        saldo: 4780,
                       }}
                     </Tabla>
                   </CardBody>

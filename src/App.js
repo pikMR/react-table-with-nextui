@@ -26,13 +26,22 @@ function App() {
                 <Card>
                   <CardBody>
                     <Tabla>
-                      {{
-                        fecha: "2021-12-25",
-                        descripcion: "Pago abono pedido motos suzuki N",
-                        sucursal: "SABANA",
-                        detalle: "SABANA DE TORRES",
-                        saldo: 19030,
-                      }}
+                      {[
+                        {
+                          fecha: "2021-12-25",
+                          descripcion: "Pago abono pedido motos suzuki N",
+                          sucursal: "SABANA",
+                          detalle: "SABANA DE TORRES",
+                          saldo: 19030,
+                        },
+                        {
+                          fecha: "2022-12-25",
+                          descripcion: "Abono pedido motos suzuki N",
+                          sucursal: "SABANA de salamanca",
+                          detalle: "SABANA DE ALBA",
+                          saldo: 49030,
+                        },
+                      ]}
                     </Tabla>
                   </CardBody>
                 </Card>
@@ -41,13 +50,22 @@ function App() {
                 <Card>
                   <CardBody>
                     <Tabla>
-                      {{
-                        fecha: "2022-10-15",
-                        descripcion: "Compra SOI - PCSS",
-                        sucursal: "ARAUCA",
-                        detalle: "amalia",
-                        saldo: -300,
-                      }}
+                      {[
+                        {
+                          fecha: "2026-10-15",
+                          descripcion: "Compra SOI - PCSS",
+                          sucursal: "ARAUCA",
+                          detalle: "o",
+                          saldo: -8,
+                        },
+                        {
+                          fecha: "2022-10-15",
+                          descripcion: "Compra SOI - PCSS",
+                          sucursal: "ARAUCA",
+                          detalle: "amalia",
+                          saldo: -300,
+                        },
+                      ]}
                     </Tabla>
                   </CardBody>
                 </Card>
@@ -56,13 +74,22 @@ function App() {
                 <Card>
                   <CardBody>
                     <Tabla>
-                      {{
-                        fecha: "2023-07-18",
-                        descripcion: "Cuota de manejo",
-                        sucursal: "LEBRIJA",
-                        detalle: "",
-                        saldo: 4780,
-                      }}
+                      {[
+                        {
+                          fecha: "2023-07-18",
+                          descripcion: "Cuota de manejo",
+                          sucursal: "LEBRIJA",
+                          detalle: "",
+                          saldo: 4780,
+                        },
+                        {
+                          fecha: "2024-07-18",
+                          descripcion: "Cuota de maneaso",
+                          sucursal: "LEBdfRIJA",
+                          detalle: "",
+                          saldo: 4580,
+                        },
+                      ]}
                     </Tabla>
                   </CardBody>
                 </Card>

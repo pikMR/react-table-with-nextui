@@ -21,23 +21,41 @@ const Tabla = ({ children }) => {
   const [filterValue, setFilterValue] = React.useState("");
   const hasSearchFilter = Boolean(filterValue);
   const [editModes, setEditModes] = useState({});
+  const [datos, setDatos] = useState(Array.isArray(children) ? children : []);
 
-      const onClear = React.useCallback(() => {
-        setFilterValue("");
-      }, []);
+  const onClear = React.useCallback(() => {
+    setFilterValue("");
+  }, []);
 
-      const onSearchChange = React.useCallback((value) => {
-        if (value) {
-          setFilterValue(value);
-        } else {
-          setFilterValue("");
-        }
-      }, []);
-  
+  const onSearchChange = React.useCallback((value) => {
+    if (value) {
+      setFilterValue(value);
+    } else {
+      setFilterValue("");
+    }
+  }, []);
+
+  const handleNewExtracto = () => {
+    // Añadir una nueva fila vacía al estado de los datos
+    const nuevoExtracto = {
+      id : "",
+      fecha: new Date().toISOString().split("T")[0],
+      descripcion: "",
+      sucursal: "",
+      detalle: "",
+      saldo: 0,
+    };
+    setDatos((prevExtractos) => [...prevExtractos, nuevoExtracto]);
+  };
+
   const topContent = React.useMemo(() => {
     return (
       <div className="flex justify-between gap-3 items-center">
-        <Button color="primary" endContent={<AddIcon />}>
+        <Button
+          color="primary"
+          endContent={<AddIcon />}
+          onClick={handleNewExtracto}
+        >
           Nuevo Extracto
         </Button>
         <Input
@@ -61,20 +79,32 @@ const Tabla = ({ children }) => {
     }));
   };
 
-  const datos = Array.isArray(children) ? children : [];
-  
-    const filteredItems = React.useMemo(() => {
-      let filteredExtracts = [...datos];
+  const filteredItems =
+    React.useMemo(
+    () => {
+    let filteredExtracts = [...datos];
 
-      if (hasSearchFilter) {
-        filteredExtracts = filteredExtracts.filter((user) =>
-          user.name.toLowerCase().includes(filterValue.toLowerCase())
-        );
+    if (hasSearchFilter) {
+      if (filterValue.length > 3) {
+              filteredExtracts = filteredExtracts.filter(
+                (extract) =>
+                   extract.descripcion
+                     .toLowerCase()
+                     .includes(filterValue.toLowerCase()) ||
+                   extract.sucursal
+                     .toLowerCase()
+                     .includes(filterValue.toLowerCase()) ||
+                   extract.detalle
+                     .toLowerCase()
+                     .includes(filterValue.toLowerCase()) ||
+                   extract.fecha.includes(filterValue)
+              );
       }
+    }
 
-      return filteredExtracts;
+    return filteredExtracts;
     }, [datos, filterValue, hasSearchFilter]);
-  
+
   return (
     <Table
       aria-label="Example static collection table"
@@ -90,8 +120,8 @@ const Tabla = ({ children }) => {
         <TableColumn>ACCIONES</TableColumn>
       </TableHeader>
       <TableBody>
-        {datos.map((item, index) => (
-          <TableRow key={index + 1}>
+        {filteredItems.map((item, index) => (
+          <TableRow key={item.id + "_" + index + 1}>
             <TableCell>
               <Input
                 isReadOnly={!editModes[index + 1]}

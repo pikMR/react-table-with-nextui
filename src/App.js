@@ -28,6 +28,7 @@ function App() {
                     <Tabla>
                       {[
                         {
+                          id: "65d23cbd6b14fff376b92e57",
                           fecha: "2021-12-25",
                           descripcion: "Pago abono pedido motos suzuki N",
                           sucursal: "SABANA",
@@ -35,6 +36,7 @@ function App() {
                           saldo: 19030,
                         },
                         {
+                          id: "65d23eaf6b14fff376b92e59",
                           fecha: "2022-12-25",
                           descripcion: "Abono pedido motos suzuki N",
                           sucursal: "SABANA de salamanca",
@@ -52,6 +54,7 @@ function App() {
                     <Tabla>
                       {[
                         {
+                          id: "65d23cbd6b14fff376b92e60",
                           fecha: "2026-10-15",
                           descripcion: "Compra SOI - PCSS",
                           sucursal: "ARAUCA",
@@ -59,6 +62,7 @@ function App() {
                           saldo: -8,
                         },
                         {
+                          id: "65d23cbd6b14fff376b92e61",
                           fecha: "2022-10-15",
                           descripcion: "Compra SOI - PCSS",
                           sucursal: "ARAUCA",
@@ -76,6 +80,7 @@ function App() {
                     <Tabla>
                       {[
                         {
+                          id: "65d23cbd6b14fff376b92e62",
                           fecha: "2023-07-18",
                           descripcion: "Cuota de manejo",
                           sucursal: "LEBRIJA",
@@ -83,6 +88,7 @@ function App() {
                           saldo: 4780,
                         },
                         {
+                          id: "65d23cbd6b14fff376b92e63",
                           fecha: "2024-07-18",
                           descripcion: "Cuota de maneaso",
                           sucursal: "LEBdfRIJA",

@@ -8,6 +8,7 @@ import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { parseDate } from "@internationalized/date";
+
 import {
   Table,
   TableHeader,
@@ -17,7 +18,7 @@ import {
   TableCell,
 } from "@nextui-org/table";
 
-const Tabla = ({ children }) => {
+const Tabla = ({ children }) => {  
   const [filterValue, setFilterValue] = React.useState("");
   const hasSearchFilter = Boolean(filterValue);
   const [editModes, setEditModes] = useState({});
@@ -38,12 +39,12 @@ const Tabla = ({ children }) => {
   const handleNewExtracto = () => {
     // Añadir una nueva fila vacía al estado de los datos
     const nuevoExtracto = {
-      id : "",
-      fecha: new Date().toISOString().split("T")[0],
-      descripcion: "",
-      sucursal: "",
-      detalle: "",
-      saldo: 0,
+      id: "",
+      date: new Date().toISOString().split("T")[0],
+      description: "",
+      branchOffice: "",
+      detail: "",
+      balance: 0,
     };
     setDatos((prevExtractos) => [...prevExtractos, nuevoExtracto]);
   };
@@ -88,16 +89,16 @@ const Tabla = ({ children }) => {
       if (filterValue.length > 3) {
               filteredExtracts = filteredExtracts.filter(
                 (extract) =>
-                   extract.descripcion
-                     .toLowerCase()
-                     .includes(filterValue.toLowerCase()) ||
-                   extract.sucursal
-                     .toLowerCase()
-                     .includes(filterValue.toLowerCase()) ||
-                   extract.detalle
-                     .toLowerCase()
-                     .includes(filterValue.toLowerCase()) ||
-                   extract.fecha.includes(filterValue)
+                  extract.description
+                    .toLowerCase()
+                    .includes(filterValue.toLowerCase()) ||
+                  // extract.sucursal
+                  //   .toLowerCase()
+                  //   .includes(filterValue.toLowerCase()) ||
+                  extract.detail
+                    .toLowerCase()
+                    .includes(filterValue.toLowerCase()) ||
+                  extract.date.includes(filterValue)
               );
       }
     }
@@ -127,7 +128,7 @@ const Tabla = ({ children }) => {
                 isReadOnly={!editModes[index + 1]}
                 type="date"
                 variant="bordered"
-                defaultValue={parseDate(item.fecha)}
+                defaultValue={new Date(item.date).toUTCString()}
                 className="max-w-xs"
               />
             </TableCell>
@@ -136,7 +137,7 @@ const Tabla = ({ children }) => {
                 isReadOnly={!editModes[index + 1]}
                 type="text"
                 variant="bordered"
-                defaultValue={item.descripcion}
+                defaultValue={item.description}
                 className="max-w-xs"
               />
             </TableCell>
@@ -145,7 +146,7 @@ const Tabla = ({ children }) => {
                 isReadOnly={!editModes[index + 1]}
                 type="text"
                 variant="bordered"
-                defaultValue={item.sucursal}
+                defaultValue={item.branchOffice.name}
                 className="max-w-xs"
               />
             </TableCell>
@@ -154,7 +155,7 @@ const Tabla = ({ children }) => {
                 isReadOnly={!editModes[index + 1]}
                 type="text"
                 variant="bordered"
-                defaultValue={item.detalle}
+                defaultValue={item.detail}
                 className="max-w-xs"
               />
             </TableCell>
@@ -163,7 +164,7 @@ const Tabla = ({ children }) => {
                 isReadOnly={!editModes[index + 1]}
                 type="number"
                 variant="bordered"
-                defaultValue={item.saldo}
+                defaultValue={item.balance}
                 className="max-w-xs"
                 startContent={
                   <div className="pointer-events-none flex items-center">

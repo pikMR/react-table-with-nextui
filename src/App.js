@@ -1,10 +1,9 @@
 import * as React from "react";
-import {NextUIProvider} from "@nextui-org/system";
-import Tabla from './components/Tabla';
+import { NextUIProvider } from "@nextui-org/system";
+import { Selectores } from "./components/Selectores";
 import './App.css';
 import { Button } from "@nextui-org/button";
-import { Tabs, Tab } from "@nextui-org/tabs";
-import { Card, CardBody } from "@nextui-org/card";
+
 import "./index.css";
 
 function App() {
@@ -21,86 +20,7 @@ function App() {
             <Button>Login</Button>
           </a>
           <div className="flex w-full flex-col">
-            <Tabs aria-label="Options">
-              <Tab key="65d23cbd6b14fff376b92e57" title="BANCOLOMBIA-LUCY">
-                <Card>
-                  <CardBody>
-                    <Tabla>
-                      {[
-                        {
-                          id: "65d23cbd6b14fff376b92e57",
-                          fecha: "2021-12-25",
-                          descripcion: "Pago abono pedido motos suzuki N",
-                          sucursal: "SABANA",
-                          detalle: "SABANA DE TORRES",
-                          saldo: 19030,
-                        },
-                        {
-                          id: "65d23eaf6b14fff376b92e59",
-                          fecha: "2022-12-25",
-                          descripcion: "Abono pedido motos suzuki N",
-                          sucursal: "SABANA de salamanca",
-                          detalle: "SABANA DE ALBA",
-                          saldo: 49030,
-                        },
-                      ]}
-                    </Tabla>
-                  </CardBody>
-                </Card>
-              </Tab>
-              <Tab key="65d23eaf6b14fff376b92e59" title="BANCOLOMBIA-DANIEL">
-                <Card>
-                  <CardBody>
-                    <Tabla>
-                      {[
-                        {
-                          id: "65d23cbd6b14fff376b92e60",
-                          fecha: "2026-10-15",
-                          descripcion: "Compra SOI - PCSS",
-                          sucursal: "ARAUCA",
-                          detalle: "o",
-                          saldo: -8,
-                        },
-                        {
-                          id: "65d23cbd6b14fff376b92e61",
-                          fecha: "2022-10-15",
-                          descripcion: "Compra SOI - PCSS",
-                          sucursal: "ARAUCA",
-                          detalle: "amalia",
-                          saldo: -300,
-                        },
-                      ]}
-                    </Tabla>
-                  </CardBody>
-                </Card>
-              </Tab>
-              <Tab key="65d23eaf6b14fff376b92e60" title="DAVIVIENDA LUCY">
-                <Card>
-                  <CardBody>
-                    <Tabla>
-                      {[
-                        {
-                          id: "65d23cbd6b14fff376b92e62",
-                          fecha: "2023-07-18",
-                          descripcion: "Cuota de manejo",
-                          sucursal: "LEBRIJA",
-                          detalle: "",
-                          saldo: 4780,
-                        },
-                        {
-                          id: "65d23cbd6b14fff376b92e63",
-                          fecha: "2024-07-18",
-                          descripcion: "Cuota de maneaso",
-                          sucursal: "LEBdfRIJA",
-                          detalle: "",
-                          saldo: 4580,
-                        },
-                      ]}
-                    </Tabla>
-                  </CardBody>
-                </Card>
-              </Tab>
-            </Tabs>
+            <Selectores/>
           </div>
         </header>
       </div>

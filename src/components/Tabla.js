@@ -7,7 +7,7 @@ import { EditIcon } from "./icons/EditIcon";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
-import { parseDate } from "@internationalized/date";
+import { useGlobalState } from './GlobalState'; // Ajusta la ruta según tu estructura de carpetas
 
 import {
   Table,
@@ -19,6 +19,7 @@ import {
 } from "@nextui-org/table";
 
 const Tabla = ({ children }) => {  
+  const { openModal } = useGlobalState(); // Utilizamos el estado global
   const [filterValue, setFilterValue] = React.useState("");
   const hasSearchFilter = Boolean(filterValue);
   const [editModes, setEditModes] = useState({});
@@ -80,6 +81,13 @@ const Tabla = ({ children }) => {
     }));
   };
 
+    const handleCreateClick = (item, rowKey) => {
+      // Actualiza el estado del modo de edición específico de la fila al hacer clic en Editar
+      const backdrop = ["opaque", "blur", "transparent"];
+      openModal("blur");
+      console.log(rowKey, item);
+    };
+
   const filteredItems =
     React.useMemo(
     () => {
@@ -107,98 +115,101 @@ const Tabla = ({ children }) => {
     }, [datos, filterValue, hasSearchFilter]);
 
   return (
-    <Table
-      aria-label="Example static collection table"
-      topContent={topContent}
-      topContentPlacement="outside"
-    >
-      <TableHeader>
-        <TableColumn>Fecha</TableColumn>
-        <TableColumn>Descripcion</TableColumn>
-        <TableColumn>Sucursal</TableColumn>
-        <TableColumn>Detalle</TableColumn>
-        <TableColumn>Saldo</TableColumn>
-        <TableColumn>ACCIONES</TableColumn>
-      </TableHeader>
-      <TableBody>
-        {filteredItems.map((item, index) => (
-          <TableRow key={item.id + "_" + index + 1}>
-            <TableCell>
-              <Input
-                isReadOnly={!editModes[index + 1]}
-                type="date"
-                variant="bordered"
-                defaultValue={new Date(item.date).toUTCString()}
-                className="max-w-xs"
-              />
-            </TableCell>
-            <TableCell>
-              <Input
-                isReadOnly={!editModes[index + 1]}
-                type="text"
-                variant="bordered"
-                defaultValue={item.description}
-                className="max-w-xs"
-              />
-            </TableCell>
-            <TableCell>
-              <Input
-                isReadOnly={!editModes[index + 1]}
-                type="text"
-                variant="bordered"
-                defaultValue={item.branchOffice.name}
-                className="max-w-xs"
-              />
-            </TableCell>
-            <TableCell>
-              <Input
-                isReadOnly={!editModes[index + 1]}
-                type="text"
-                variant="bordered"
-                defaultValue={item.detail}
-                className="max-w-xs"
-              />
-            </TableCell>
-            <TableCell>
-              <Input
-                isReadOnly={!editModes[index + 1]}
-                type="number"
-                variant="bordered"
-                defaultValue={item.balance}
-                className="max-w-xs"
-                startContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">$</span>
-                  </div>
-                }
-              />
-            </TableCell>
-            <TableCell>
-              <div className="relative flex items-center gap-2">
-                <Tooltip content="Editar Extracto">
-                  <span
-                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                    onClick={() => handleEditClick(index + 1)}
-                  >
-                    <EditIcon />
-                  </span>
-                </Tooltip>
-                <Tooltip color="danger" content="Eliminar Extracto">
-                  <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                    <DeleteIcon />
-                  </span>
-                </Tooltip>
-                <Tooltip color="success" content="Actualizar Extracto">
-                  <span className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50">
-                    <CheckIcon />
-                  </span>
-                </Tooltip>
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+      <Table
+        aria-label="Example static collection table"
+        topContent={topContent}
+        topContentPlacement="outside"
+      >
+        <TableHeader>
+          <TableColumn>Fecha</TableColumn>
+          <TableColumn>Descripcion</TableColumn>
+          <TableColumn>Sucursal</TableColumn>
+          <TableColumn>Detalle</TableColumn>
+          <TableColumn>Saldo</TableColumn>
+          <TableColumn>ACCIONES</TableColumn>
+        </TableHeader>
+        <TableBody>
+          {filteredItems.map((item, index) => (
+            <TableRow key={item.id + "_" + index + 1}>
+              <TableCell>
+                <Input
+                  isReadOnly={!editModes[index + 1]}
+                  type="date"
+                  variant="bordered"
+                  defaultValue={new Date(item.date).toUTCString()}
+                  className="max-w-xs"
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  isReadOnly={!editModes[index + 1]}
+                  type="text"
+                  variant="bordered"
+                  defaultValue={item.description}
+                  className="max-w-xs"
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  isReadOnly={!editModes[index + 1]}
+                  type="text"
+                  variant="bordered"
+                  defaultValue={item.branchOffice.name}
+                  className="max-w-xs"
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  isReadOnly={!editModes[index + 1]}
+                  type="text"
+                  variant="bordered"
+                  defaultValue={item.detail}
+                  className="max-w-xs"
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  isReadOnly={!editModes[index + 1]}
+                  type="number"
+                  variant="bordered"
+                  defaultValue={item.balance}
+                  className="max-w-xs"
+                  startContent={
+                    <div className="pointer-events-none flex items-center">
+                      <span className="text-default-400 text-small">$</span>
+                    </div>
+                  }
+                />
+              </TableCell>
+              <TableCell>
+                <div className="relative flex items-center gap-2">
+                  <Tooltip content="Editar Extracto">
+                    <span
+                      className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                      onClick={() => handleEditClick(index + 1)}
+                    >
+                      <EditIcon />
+                    </span>
+                  </Tooltip>
+                  <Tooltip color="danger" content="Eliminar Extracto">
+                    <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                      <DeleteIcon />
+                    </span>
+                  </Tooltip>
+                  <Tooltip color="success" content="Actualizar Extracto">
+                    <span
+                      className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
+                      onClick={() => handleCreateClick(item, index + 1)}
+                    >
+                      <CheckIcon />
+                    </span>
+                  </Tooltip>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
   );
 };
 

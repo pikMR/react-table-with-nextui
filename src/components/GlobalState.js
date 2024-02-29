@@ -4,8 +4,8 @@ import React, { createContext, useContext, useState } from 'react';
 const GlobalStateContext = createContext();
 
 export const GlobalStateProvider = ({ children }) => {
-    const [modalOpen, setModalOpen] = useState(false);
-    const [backdrop, setBackdrop] = useState("opaque");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [backdrop, setBackdrop] = useState(["opaque","tittle","message"]);
 
     const openModal = (backdrop) =>
     {

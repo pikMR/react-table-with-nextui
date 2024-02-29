@@ -83,8 +83,12 @@ const Tabla = ({ children }) => {
 
     const handleCreateClick = (item, rowKey) => {
       // Actualiza el estado del modo de edición específico de la fila al hacer clic en Editar
-      const backdrop = ["opaque", "blur", "transparent"];
-      openModal("blur");
+      // const backdrop = ["opaque", "blur", "transparent"];
+      openModal([
+        "opaque",
+        "Extracto Actualizado",
+        "Se actualizó correctamente " + item.description,
+      ]);
       console.log(rowKey, item);
     };
 
@@ -136,7 +140,7 @@ const Tabla = ({ children }) => {
                   isReadOnly={!editModes[index + 1]}
                   type="date"
                   variant="bordered"
-                  defaultValue={new Date(item.date).toUTCString()}
+                  defaultValue={item.date}
                   className="max-w-xs"
                 />
               </TableCell>

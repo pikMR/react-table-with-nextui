@@ -2,9 +2,7 @@ import Tabla from "./Tabla";
 import { useEffect, useState, useMemo } from "react";
 import { Tabs, Tab } from "@nextui-org/tabs";
 import { Card, CardBody } from "@nextui-org/card";
-
-const urlBank = "https://localhost:44377/Bank";
-const urlExtract = "https://localhost:44377/Extract/Bank/";
+import { getBanks, getExtractsByBank } from "../service";
 
 export const Selectores = () => {
   const [tabs, setTabs] = useState([]);
@@ -13,8 +11,7 @@ export const Selectores = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(urlBank)
-      .then((response) => response.json())
+      getBanks()
       .then((usefulData) => {
         setTabs(usefulData.banks);
         setLoading(false);
@@ -23,12 +20,11 @@ export const Selectores = () => {
 
   useEffect(() => {
     if (tabs[selected]) {
-      fetch(`${urlExtract}${tabs[selected].id}`)
-        .then((response) => response.json())
-          .then((data) => {
-            console.log(data.extracts)
+      getExtractsByBank(tabs[selected].id)
+        .then((data) => {
+          console.log(data.extracts);
           setTableData(data.extracts);
-        });
+      });
     }
   }, [selected, tabs]);
   const memoizedTabs = useMemo(() => tabs, [tabs]);

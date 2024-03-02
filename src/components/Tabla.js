@@ -23,7 +23,7 @@ const Tabla = ({ children }) => {
   const [filterValue, setFilterValue] = React.useState("");
   const hasSearchFilter = Boolean(filterValue);
   const [editModes, setEditModes] = useState({});
-  const [datos, setDatos] = useState(Array.isArray(children) ? children : []);
+  const [datos, setDatos] = useState(children);
 
   const onClear = React.useCallback(() => {
     setFilterValue("");
@@ -89,13 +89,12 @@ const Tabla = ({ children }) => {
         "Extracto Actualizado",
         "Se actualizó correctamente " + item.description,
       ]);
-      console.log(rowKey, item);
     };
 
   const filteredItems =
     React.useMemo(
     () => {
-    let filteredExtracts = [...datos];
+    let filteredExtracts = datos ? [...children] : [...datos];
 
     if (hasSearchFilter) {
       if (filterValue.length > 3) {
@@ -116,7 +115,7 @@ const Tabla = ({ children }) => {
     }
 
     return filteredExtracts;
-    }, [datos, filterValue, hasSearchFilter]);
+    }, [datos, filterValue, hasSearchFilter, children]);
 
   return (
       <Table

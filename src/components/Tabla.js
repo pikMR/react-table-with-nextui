@@ -9,6 +9,7 @@ import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { useGlobalState } from './GlobalState'; // Ajusta la ruta según tu estructura de carpetas
+import { putExtract } from "../service";
 
 import {
   Table,
@@ -83,14 +84,26 @@ const Tabla = ({ tableData, listData }) => {
     }));
   };
 
-  const handleCreateClick = (item, rowKey) => {
+  const handleValidateClick = (item, rowKey) => {
+    // TODO no coje los valores nuevos...
+    console.log("putExtract 1", item, rowKey);
     // Actualiza el estado del modo de edición específico de la fila al hacer clic en Editar
     // const backdrop = ["opaque", "blur", "transparent"];
-    openModal([
-      "opaque",
-      "Extracto Actualizado",
-      "Se actualizó correctamente " + item.description,
-    ]);
+    var response = putExtract(item);
+    console.log('putExtract 2', response);
+    if (response) {
+      openModal([
+        "opaque",
+        "Extracto Actualizado",
+        "Se actualizó correctamente " + item.description,
+      ]);  
+    } else {
+      openModal([
+        "opaque",
+        "Extracto NO Actualizado",
+        "No Se actualizó correctamente " + item.description,
+      ]);  
+    }
   };
 
   const filteredItems = React.useMemo(() => {
@@ -216,7 +229,7 @@ const Tabla = ({ tableData, listData }) => {
                 <Tooltip color="success" content="Actualizar Extracto">
                   <span
                     className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
-                    onClick={() => handleCreateClick(item, index + 1)}
+                    onClick={() => handleValidateClick(item, index + 1)}
                   >
                     <CheckIcon />
                   </span>

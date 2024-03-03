@@ -25,3 +25,28 @@ export const getExtractsByBank = async (idbank) => {
     throw new Error(`error al obtener los extractos con el banco ${idbank}`);
   }
 };
+/*
+const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: 'React PUT Request Example' })
+    };
+    fetch('https://jsonplaceholder.typicode.com/posts/1', requestOptions)
+        .then(response => response.json())
+        .then(data => this.setState({ postId: data.id }));
+*/
+
+export const putExtract = async (extract) => {
+  console.log(extract);
+  try {
+    const requestOptions = {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(extract),
+    };
+    const response = await fetch(baseurl + "/Extract", requestOptions);
+    return response.json();
+  } catch {
+    throw new Error(`error al obtener los extractos con el extracto ${extract.id}`);
+  }
+};

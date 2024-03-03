@@ -4,12 +4,7 @@ import { DeleteIcon } from "./icons/DeleteIcon";
 import { CheckIcon } from "./icons/CheckIcon";
 import { SearchIcon } from "./icons/SearchIcon";
 import { EditIcon } from "./icons/EditIcon";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem
-} from "@nextui-org/dropdown";
+import { Select, SelectSection, SelectItem } from "@nextui-org/select";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
@@ -168,29 +163,17 @@ const Tabla = ({ tableData, listData }) => {
               />
             </TableCell>
             <TableCell>
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button variant="bordered">Sucursales</Button>
-                </DropdownTrigger>
-                <DropdownMenu aria-label="Dynamic Actions" items={listData}>
-                  {(item) => (
-                    <DropdownItem
-                      key={item.key}
-                      color={item.key === "delete" ? "danger" : "default"}
-                      className={item.key === "delete" ? "text-danger" : ""}
-                    >
-                      {item.name}
-                    </DropdownItem>
-                  )}
-                </DropdownMenu>
-              </Dropdown>
-              {/* <Dropdown
-                isReadOnly={!editModes[index + 1]}
-                type="text"
+              <Select
                 variant="bordered"
-                defaultValue={item.branchOffice.name}
-                className="max-w-xs"
-              /> */}
+                items={list}
+                placeholder={item.branchOffice.name}
+              >
+                {(sucursal) => (
+                  <SelectItem key={sucursal.id}>
+                    {sucursal.name}
+                  </SelectItem>
+                )}
+              </Select>
             </TableCell>
             <TableCell>
               <Input

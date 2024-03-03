@@ -5,7 +5,7 @@ const { nextui } = require("@nextui-org/theme");
 module.exports = {
   content: [
     // or you can use a glob pattern (multiple component styles)
-    "./node_modules/@nextui-org/theme/dist/components/(theme|modal|button|snippet|code|input|tabs|card|table|tooltip|dropdown).js",
+    "./node_modules/@nextui-org/theme/dist/components/(theme|modal|button|snippet|code|input|tabs|card|table|tooltip|select).js",
   ],
   theme: {
     extend: {},

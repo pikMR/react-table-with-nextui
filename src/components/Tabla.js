@@ -4,6 +4,12 @@ import { DeleteIcon } from "./icons/DeleteIcon";
 import { CheckIcon } from "./icons/CheckIcon";
 import { SearchIcon } from "./icons/SearchIcon";
 import { EditIcon } from "./icons/EditIcon";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem
+} from "@nextui-org/dropdown";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
@@ -18,12 +24,13 @@ import {
   TableCell,
 } from "@nextui-org/table";
 
-const Tabla = ({ children }) => {  
+const Tabla = ({ tableData, listData }) => {
   const { openModal } = useGlobalState(); // Utilizamos el estado global
   const [filterValue, setFilterValue] = React.useState("");
   const hasSearchFilter = Boolean(filterValue);
   const [editModes, setEditModes] = useState({});
-  const [datos, setDatos] = useState(children);
+  const [datos, setDatos] = useState(tableData);
+  const [list, setList] = useState(listData);
 
   const onClear = React.useCallback(() => {
     setFilterValue("");
@@ -81,138 +88,162 @@ const Tabla = ({ children }) => {
     }));
   };
 
-    const handleCreateClick = (item, rowKey) => {
-      // Actualiza el estado del modo de edición específico de la fila al hacer clic en Editar
-      // const backdrop = ["opaque", "blur", "transparent"];
-      openModal([
-        "opaque",
-        "Extracto Actualizado",
-        "Se actualizó correctamente " + item.description,
-      ]);
-    };
+  const handleCreateClick = (item, rowKey) => {
+    // Actualiza el estado del modo de edición específico de la fila al hacer clic en Editar
+    // const backdrop = ["opaque", "blur", "transparent"];
+    openModal([
+      "opaque",
+      "Extracto Actualizado",
+      "Se actualizó correctamente " + item.description,
+    ]);
+  };
 
-  const filteredItems =
-    React.useMemo(
-    () => {
-    let filteredExtracts = datos ? [...children] : [...datos];
+  const filteredItems = React.useMemo(() => {
+    console.log("tableData", tableData);
+    console.log("list", list);
+    console.log("listData", listData);
+    if (list?.length === 0) {
+      setList(listData);
+    }
+    
+
+    if (datos.length === 0) {
+      setDatos(tableData);
+    }
+
+    let filteredExtracts = [...datos];
 
     if (hasSearchFilter) {
       if (filterValue.length > 3) {
-              filteredExtracts = filteredExtracts.filter(
-                (extract) =>
-                  extract.description
-                    .toLowerCase()
-                    .includes(filterValue.toLowerCase()) ||
-                  // extract.sucursal
-                  //   .toLowerCase()
-                  //   .includes(filterValue.toLowerCase()) ||
-                  extract.detail
-                    .toLowerCase()
-                    .includes(filterValue.toLowerCase()) ||
-                  extract.date.includes(filterValue)
-              );
+        filteredExtracts = filteredExtracts.filter(
+          (extract) =>
+            extract.description
+              .toLowerCase()
+              .includes(filterValue.toLowerCase()) ||
+            // extract.sucursal
+            //   .toLowerCase()
+            //   .includes(filterValue.toLowerCase()) ||
+            extract.detail.toLowerCase().includes(filterValue.toLowerCase()) ||
+            extract.date.includes(filterValue)
+        );
       }
     }
 
     return filteredExtracts;
-    }, [datos, filterValue, hasSearchFilter, children]);
+  }, [list, listData, datos, hasSearchFilter, tableData, filterValue]);
 
   return (
-      <Table
-        aria-label="Example static collection table"
-        topContent={topContent}
-        topContentPlacement="outside"
-      >
-        <TableHeader>
-          <TableColumn>Fecha</TableColumn>
-          <TableColumn>Descripcion</TableColumn>
-          <TableColumn>Sucursal</TableColumn>
-          <TableColumn>Detalle</TableColumn>
-          <TableColumn>Saldo</TableColumn>
-          <TableColumn>ACCIONES</TableColumn>
-        </TableHeader>
-        <TableBody>
-          {filteredItems.map((item, index) => (
-            <TableRow key={item.id + "_" + index + 1}>
-              <TableCell>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="date"
-                  variant="bordered"
-                  defaultValue={item.date}
-                  className="max-w-xs"
-                />
-              </TableCell>
-              <TableCell>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="text"
-                  variant="bordered"
-                  defaultValue={item.description}
-                  className="max-w-xs"
-                />
-              </TableCell>
-              <TableCell>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="text"
-                  variant="bordered"
-                  defaultValue={item.branchOffice.name}
-                  className="max-w-xs"
-                />
-              </TableCell>
-              <TableCell>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="text"
-                  variant="bordered"
-                  defaultValue={item.detail}
-                  className="max-w-xs"
-                />
-              </TableCell>
-              <TableCell>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="number"
-                  variant="bordered"
-                  defaultValue={item.balance}
-                  className="max-w-xs"
-                  startContent={
-                    <div className="pointer-events-none flex items-center">
-                      <span className="text-default-400 text-small">$</span>
-                    </div>
-                  }
-                />
-              </TableCell>
-              <TableCell>
-                <div className="relative flex items-center gap-2">
-                  <Tooltip content="Editar Extracto">
-                    <span
-                      className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                      onClick={() => handleEditClick(index + 1)}
+    <Table
+      aria-label="Example static collection table"
+      topContent={topContent}
+      topContentPlacement="outside"
+    >
+      <TableHeader>
+        <TableColumn>Fecha</TableColumn>
+        <TableColumn>Descripcion</TableColumn>
+        <TableColumn>Sucursal</TableColumn>
+        <TableColumn>Detalle</TableColumn>
+        <TableColumn>Saldo</TableColumn>
+        <TableColumn>ACCIONES</TableColumn>
+      </TableHeader>
+      <TableBody>
+        {filteredItems.map((item, index) => (
+          <TableRow key={item.id + "_" + index + 1}>
+            <TableCell>
+              <Input
+                isReadOnly={!editModes[index + 1]}
+                type="date"
+                variant="bordered"
+                defaultValue={item.date}
+                className="max-w-xs"
+              />
+            </TableCell>
+            <TableCell>
+              <Input
+                isReadOnly={!editModes[index + 1]}
+                type="text"
+                variant="bordered"
+                defaultValue={item.description}
+                className="max-w-xs"
+              />
+            </TableCell>
+            <TableCell>
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button variant="bordered">Sucursales</Button>
+                </DropdownTrigger>
+                <DropdownMenu aria-label="Dynamic Actions" items={listData}>
+                  {(item) => (
+                    <DropdownItem
+                      key={item.key}
+                      color={item.key === "delete" ? "danger" : "default"}
+                      className={item.key === "delete" ? "text-danger" : ""}
                     >
-                      <EditIcon />
-                    </span>
-                  </Tooltip>
-                  <Tooltip color="danger" content="Eliminar Extracto">
-                    <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                      <DeleteIcon />
-                    </span>
-                  </Tooltip>
-                  <Tooltip color="success" content="Actualizar Extracto">
-                    <span
-                      className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
-                      onClick={() => handleCreateClick(item, index + 1)}
-                    >
-                      <CheckIcon />
-                    </span>
-                  </Tooltip>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+                      {item.name}
+                    </DropdownItem>
+                  )}
+                </DropdownMenu>
+              </Dropdown>
+              {/* <Dropdown
+                isReadOnly={!editModes[index + 1]}
+                type="text"
+                variant="bordered"
+                defaultValue={item.branchOffice.name}
+                className="max-w-xs"
+              /> */}
+            </TableCell>
+            <TableCell>
+              <Input
+                isReadOnly={!editModes[index + 1]}
+                type="text"
+                variant="bordered"
+                defaultValue={item.detail}
+                className="max-w-xs"
+              />
+            </TableCell>
+            <TableCell>
+              <Input
+                isReadOnly={!editModes[index + 1]}
+                type="number"
+                variant="bordered"
+                defaultValue={item.balance}
+                className="max-w-xs"
+                startContent={
+                  <div className="pointer-events-none flex items-center">
+                    <span className="text-default-400 text-small">$</span>
+                  </div>
+                }
+              />
+            </TableCell>
+            <TableCell>
+              <div className="relative flex items-center gap-2">
+                <Tooltip content="Editar Extracto">
+                  <span
+                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                    onClick={() => handleEditClick(index + 1)}
+                  >
+                    <EditIcon />
+                  </span>
+                </Tooltip>
+                <Tooltip color="danger" content="Eliminar Extracto">
+                  <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                    <DeleteIcon />
+                  </span>
+                </Tooltip>
+                <Tooltip color="success" content="Actualizar Extracto">
+                  <span
+                    className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
+                    onClick={() => handleCreateClick(item, index + 1)}
+                  >
+                    <CheckIcon />
+                  </span>
+                </Tooltip>
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 };
 

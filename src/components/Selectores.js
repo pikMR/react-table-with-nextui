@@ -2,11 +2,12 @@ import Tabla from "./Tabla";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Tabs, Tab } from "@nextui-org/tabs";
 import { Card, CardBody } from "@nextui-org/card";
-import { getBanks, getExtractsByBank } from "../service";
+import { getBanks, getExtractsByBank, getBranchOffice } from "../service";
 
 export const Selectores = () => {
   const [tabs, setTabs] = useState([]);
   const [tableData, setTableData] = useState([]);
+  const [listData, setListData] = useState([]);
   const [selected, setSelected] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -20,8 +21,10 @@ export const Selectores = () => {
       setTabs(usefulData.banks);
 
       if (usefulData.banks.length > 0) {
-        const data = await getExtractsByBank(usefulData.banks[selected].id);
-        setTableData(data.extracts);
+        const extractsData = await getExtractsByBank(usefulData.banks[selected].id);
+        setTableData(extractsData.extracts);
+        const branchOfficeData = await getBranchOffice();
+        setListData(branchOfficeData.branchOffices);
         setLoading(false);
       }
     } catch (error) {
@@ -47,7 +50,8 @@ export const Selectores = () => {
         <Tab key={index} title={item.name}>
           <Card>
             <CardBody>
-              <Tabla>{tableData}</Tabla>
+              <Tabla tableData={tableData} listData={listData}>
+              </Tabla>
             </CardBody>
           </Card>
         </Tab>

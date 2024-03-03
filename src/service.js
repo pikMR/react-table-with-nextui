@@ -8,6 +8,15 @@ export const getBanks = async () => {
     }
 }
 
+export const getBranchOffice = async () => {
+  try {
+    const response = await fetch(baseurl + "/BranchOffice");
+    return response.json();
+  } catch {
+    throw new Error("error al obtener las sucursales.");
+  }
+};
+
 export const getExtractsByBank = async (idbank) => {
   try {
     const response = await fetch(baseurl + "/Extract/Bank/" + idbank);

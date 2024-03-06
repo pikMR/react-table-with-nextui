@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { AddIcon } from "./icons/AddIcon";
 import { DeleteIcon } from "./icons/DeleteIcon";
 import { CheckIcon } from "./icons/CheckIcon";
 import { SearchIcon } from "./icons/SearchIcon";
 import { EditIcon } from "./icons/EditIcon";
-import { Select, SelectSection, SelectItem } from "@nextui-org/select";
+import { Select, SelectItem } from "@nextui-org/select";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
@@ -21,16 +21,24 @@ import {
 } from "@nextui-org/table";
 
 const Tabla = ({ tableData, listData }) => {
+  const column_date = "date";
+  const column_description = "description";
+  const column_detail = "detail";
+  const column_balance = "balance";
+  
   const { openModal } = useGlobalState(); // Utilizamos el estado global
   const [filterValue, setFilterValue] = React.useState("");
   const hasSearchFilter = Boolean(filterValue);
   const [editModes, setEditModes] = useState({});
   const [datos, setDatos] = useState(tableData);
   const [list, setList] = useState(listData);
+  const itemsRef = useRef(null);
 
   const onClear = React.useCallback(() => {
     setFilterValue("");
   }, []);
+
+
 
   const onSearchChange = React.useCallback((value) => {
     if (value) {
@@ -52,6 +60,14 @@ const Tabla = ({ tableData, listData }) => {
     };
     setDatos((prevExtractos) => [...prevExtractos, nuevoExtracto]);
   };
+
+  function getMap() {
+    if (!itemsRef.current) {
+      // Initialize the Map on first usage.
+      itemsRef.current = new Map();
+    }
+    return itemsRef.current;
+  }
 
   const topContent = React.useMemo(() => {
     return (
@@ -85,13 +101,18 @@ const Tabla = ({ tableData, listData }) => {
   };
 
   const handleValidateClick = (item, rowKey) => {
-    // TODO no coje los valores nuevos...
-    console.log("putExtract 1", item, rowKey);
-    // Actualiza el estado del modo de edición específico de la fila al hacer clic en Editar
-    // const backdrop = ["opaque", "blur", "transparent"];
-    var response = putExtract(item);
-    console.log('putExtract 2', response);
-    if (response) {
+    var map = getMap();
+    var nuevoValorDate = map.get(item.id + "_" + column_date);
+    var nuevoValorBalance = map.get(item.id + "_" + column_balance);
+    var nuevoValorDescription = map.get(item.id + "_" + column_description);
+    var nuevoValorDetail = map.get(item.id + "_" + column_detail);
+    item.date = nuevoValorDate ?? item.date;
+    item.balance = nuevoValorBalance ?? item.balance;
+    item.description = nuevoValorDescription ?? item.description;
+    item.detail = nuevoValorDetail ?? item.detail;
+    putExtract(item);
+    console.log('putExtract 2', item);
+    if (item) {
       openModal([
         "opaque",
         "Extracto Actualizado",
@@ -107,14 +128,10 @@ const Tabla = ({ tableData, listData }) => {
   };
 
   const filteredItems = React.useMemo(() => {
-    console.log("tableData", tableData);
-    console.log("list", list);
-    console.log("listData", listData);
     if (list?.length === 0) {
       setList(listData);
     }
     
-
     if (datos.length === 0) {
       setDatos(tableData);
     }
@@ -164,6 +181,18 @@ const Tabla = ({ tableData, listData }) => {
                 variant="bordered"
                 defaultValue={item.date}
                 className="max-w-xs"
+                baseRef={(node) => {
+                  const map = getMap();
+                  if (node) {
+                    map.set(
+                      item.id + "_" + column_date,
+                      node.querySelector("input").value
+                    );
+                  } else {
+                    map.delete(item.id + "_" + column_date);
+                  }
+                }}
+                // onChange={handleChange(item, index)}
               />
             </TableCell>
             <TableCell>
@@ -173,18 +202,29 @@ const Tabla = ({ tableData, listData }) => {
                 variant="bordered"
                 defaultValue={item.description}
                 className="max-w-xs"
+                baseRef={(node) => {
+                  const map = getMap();
+                  if (node) {
+                    map.set(
+                      item.id + "_" + column_description,
+                      node.querySelector("input").value
+                    );
+                  } else {
+                    map.delete(item.id + "_" + column_description);
+                  }
+                }}
+                // onChange={handleChange(item, index)}
               />
             </TableCell>
             <TableCell>
               <Select
+                aria-labelledby={list.map(objeto => objeto.name).join(",")}
                 variant="bordered"
                 items={list}
                 placeholder={item.branchOffice.name}
               >
                 {(sucursal) => (
-                  <SelectItem key={sucursal.id}>
-                    {sucursal.name}
-                  </SelectItem>
+                  <SelectItem key={sucursal.id}>{sucursal.name}</SelectItem>
                 )}
               </Select>
             </TableCell>
@@ -195,6 +235,18 @@ const Tabla = ({ tableData, listData }) => {
                 variant="bordered"
                 defaultValue={item.detail}
                 className="max-w-xs"
+                baseRef={(node) => {
+                  const map = getMap();
+                  if (node) {
+                    map.set(
+                      item.id + "_" + column_detail,
+                      node.querySelector("input").value
+                    );
+                  } else {
+                    map.delete(item.id + "_" + column_detail);
+                  }
+                }}
+                // onChange={handleChange(item, index)}
               />
             </TableCell>
             <TableCell>
@@ -209,6 +261,18 @@ const Tabla = ({ tableData, listData }) => {
                     <span className="text-default-400 text-small">$</span>
                   </div>
                 }
+                baseRef={(node) => {
+                  const map = getMap();
+                  if (node) {
+                    map.set(
+                      item.id + "_" + column_balance,
+                      node.querySelector("input").value
+                    );
+                  } else {
+                    map.delete(item.id + "_" + column_balance);
+                  }
+                }}
+                // onChange={handleChange(item, index)}
               />
             </TableCell>
             <TableCell>

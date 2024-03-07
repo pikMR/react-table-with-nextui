@@ -100,7 +100,7 @@ const Tabla = ({ tableData, listData }) => {
     }));
   };
 
-  const handleValidateClick = (item, rowKey) => {
+  const handleValidateClick = async (item) => {
     var map = getMap();
     var nuevoValorDate = map.get(item.id + "_" + column_date);
     var nuevoValorBalance = map.get(item.id + "_" + column_balance);
@@ -110,20 +110,21 @@ const Tabla = ({ tableData, listData }) => {
     item.balance = nuevoValorBalance ?? item.balance;
     item.description = nuevoValorDescription ?? item.description;
     item.detail = nuevoValorDetail ?? item.detail;
-    putExtract(item);
-    console.log('putExtract 2', item);
-    if (item) {
+    
+    try {
+      var update = await putExtract(item);
+      console.log("update", update);
       openModal([
-        "opaque",
-        "Extracto Actualizado",
-        "Se actualizó correctamente " + item.description,
+      "opaque",
+      "Extracto Actualizado",
+      "Se actualizó correctamente " + item.description,
       ]);  
-    } else {
+    } catch (err) {
+      console.log("put",err);
       openModal([
-        "opaque",
-        "Extracto NO Actualizado",
-        "No Se actualizó correctamente " + item.description,
-      ]);  
+      "opaque",
+      "Extracto NO Actualizado",
+      "No Se actualizó correctamente " + item.description,]); 
     }
   };
 
@@ -293,7 +294,7 @@ const Tabla = ({ tableData, listData }) => {
                 <Tooltip color="success" content="Actualizar Extracto">
                   <span
                     className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
-                    onClick={() => handleValidateClick(item, index + 1)}
+                    onClick={() => handleValidateClick(item)}
                   >
                     <CheckIcon />
                   </span>

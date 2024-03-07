@@ -37,7 +37,6 @@ const requestOptions = {
 */
 
 export const putExtract = async (extract) => {
-  console.log(extract);
   try {
     const requestOptions = {
       method: "PUT",
@@ -45,7 +44,7 @@ export const putExtract = async (extract) => {
       body: JSON.stringify(extract),
     };
     const response = await fetch(baseurl + "/Extract", requestOptions);
-    return response.json();
+    return await response.text();
   } catch {
     throw new Error(`error al obtener los extractos con el extracto ${extract.id}`);
   }

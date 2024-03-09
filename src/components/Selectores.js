@@ -9,33 +9,40 @@ export const Selectores = () => {
   const [tableData, setTableData] = useState([]);
   const [listData, setListData] = useState([]);
   const [selected, setSelected] = useState(0);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   const handleTabChange = useCallback((newSelected) => {
+    console.log("🚀 ~ handleTabChange ~ newSelected:", newSelected)
     setSelected(newSelected);
   }, []);
 
   const fetchData = useCallback(async () => {
     try {
-      const usefulData = await getBanks();
-      setTabs(usefulData.banks);
+      const fetchBanks = await getBanks();
+      console.log("🚀 ~ fetchData ~ fetchBanks:", fetchBanks)
+      const fetchBranchOffice = await getBranchOffice();
+      console.log("🚀 ~ fetchData ~ fetchBranchOffice:", fetchBranchOffice)
 
-      if (usefulData.banks.length > 0) {
-        const extractsData = await getExtractsByBank(usefulData.banks[selected].id);
-        setTableData(extractsData.extracts);
-        const branchOfficeData = await getBranchOffice();
-        setListData(branchOfficeData.branchOffices);
-        setLoading(false);
+      if (fetchBanks.banks.length > 0) {
+        setTabs(fetchBanks.banks);
+        const fetchExtractsByBank = await getExtractsByBank(fetchBanks.banks[selected].id);
+
+        if (fetchExtractsByBank.extracts.length > 0) {
+          setTableData(fetchExtractsByBank.extracts);
+          setListData(fetchBranchOffice.branchOffices);  
+        }
+        // setLoading(false);
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false);
+      console.log("🐗 ~ fetchData ~ error:", error);
+      // setLoading(false);
     }
   }, [selected]);
 
   useEffect(() => {
+    console.log("🚀 ~ Selectores.useEffect");
     fetchData();
-  }, [selected, fetchData]); // Esto debe ejecutarse solo cuando selected cambia
+  }, [selected, fetchData]);
 
   const memoizedTabs = useMemo(() => tabs, [tabs]);
 
@@ -50,8 +57,9 @@ export const Selectores = () => {
         <Tab key={index} title={item.name}>
           <Card>
             <CardBody>
-              <Tabla tableData={tableData} listData={listData}>
-              </Tabla>
+              <Tabla tableData={tableData} listData={listData}></Tabla>
+              {/* {<pre>tableData: {JSON.stringify(tableData, null, "\t")}</pre>}
+              {<pre>listData: {JSON.stringify(listData, null, "\t")}</pre>} */}
             </CardBody>
           </Card>
         </Tab>

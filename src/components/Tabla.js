@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { AddIcon } from "./icons/AddIcon";
 import { DeleteIcon } from "./icons/DeleteIcon";
 import { CheckIcon } from "./icons/CheckIcon";
@@ -34,11 +34,15 @@ const Tabla = ({ tableData, listData }) => {
   const [list, setList] = useState(listData);
   const itemsRef = useRef(null);
 
+  useEffect(() => {
+    console.log("🚀 ~ Tabla.useEffect");
+    setDatos(tableData);
+    setList(listData);
+  }, [tableData, listData]);
+
   const onClear = React.useCallback(() => {
     setFilterValue("");
   }, []);
-
-
 
   const onSearchChange = React.useCallback((value) => {
     if (value) {
@@ -50,6 +54,7 @@ const Tabla = ({ tableData, listData }) => {
 
   const handleNewExtracto = () => {
     // Añadir una nueva fila vacía al estado de los datos
+    console.log("🚀 ~ handleNewExtracto ~ handleNewExtracto:");
     const nuevoExtracto = {
       id: "",
       date: new Date().toISOString().split("T")[0],
@@ -60,6 +65,7 @@ const Tabla = ({ tableData, listData }) => {
     };
     setDatos((prevExtractos) => [...prevExtractos, nuevoExtracto]);
   };
+
 
   function getMap() {
     if (!itemsRef.current) {
@@ -101,6 +107,7 @@ const Tabla = ({ tableData, listData }) => {
   };
 
   const handleValidateClick = async (item) => {
+    console.log("🚀 ~ handleValidateClick ~ item:", item)
     var map = getMap();
     var nuevoValorDate = map.get(item.id + "_" + column_date);
     var nuevoValorBalance = map.get(item.id + "_" + column_balance);
@@ -120,7 +127,6 @@ const Tabla = ({ tableData, listData }) => {
       "Se actualizó correctamente " + item.description,
       ]);  
     } catch (err) {
-      console.log("put",err);
       openModal([
       "opaque",
       "Extracto NO Actualizado",
@@ -129,15 +135,8 @@ const Tabla = ({ tableData, listData }) => {
   };
 
   const filteredItems = React.useMemo(() => {
-    if (list?.length === 0) {
-      setList(listData);
-    }
-    
-    if (datos.length === 0) {
-      setDatos(tableData);
-    }
-
     let filteredExtracts = [...datos];
+    console.log("🚀 ~ filteredItems ~ filteredExtracts:", filteredExtracts);
 
     if (hasSearchFilter) {
       if (filterValue.length > 3) {
@@ -156,155 +155,155 @@ const Tabla = ({ tableData, listData }) => {
     }
 
     return filteredExtracts;
-  }, [list, listData, datos, hasSearchFilter, tableData, filterValue]);
+  }, [datos, hasSearchFilter, filterValue]);
 
   return (
-    <Table
-      aria-label="Example static collection table"
-      topContent={topContent}
-      topContentPlacement="outside"
-    >
-      <TableHeader>
-        <TableColumn>Fecha</TableColumn>
-        <TableColumn>Descripcion</TableColumn>
-        <TableColumn>Sucursal</TableColumn>
-        <TableColumn>Detalle</TableColumn>
-        <TableColumn>Saldo</TableColumn>
-        <TableColumn>ACCIONES</TableColumn>
-      </TableHeader>
-      <TableBody>
-        {filteredItems.map((item, index) => (
-          <TableRow key={item.id + "_" + index + 1}>
-            <TableCell>
-              <Input
-                isReadOnly={!editModes[index + 1]}
-                type="date"
-                variant="bordered"
-                defaultValue={item.date}
-                className="max-w-xs"
-                baseRef={(node) => {
-                  const map = getMap();
-                  if (node) {
-                    map.set(
-                      item.id + "_" + column_date,
-                      node.querySelector("input").value
-                    );
-                  } else {
-                    map.delete(item.id + "_" + column_date);
+      <Table
+        aria-label="Example static collection table"
+        topContent={topContent}
+        topContentPlacement="outside"
+      >
+        <TableHeader>
+          <TableColumn>Fecha</TableColumn>
+          <TableColumn>Descripcion</TableColumn>
+          <TableColumn>Sucursal</TableColumn>
+          <TableColumn>Detalle</TableColumn>
+          <TableColumn>Saldo</TableColumn>
+          <TableColumn>ACCIONES</TableColumn>
+        </TableHeader>
+        <TableBody>
+          {filteredItems.map((item, index) => (
+            <TableRow key={item.id + "_" + index + 1}>
+              <TableCell>
+                <Input
+                  isReadOnly={!editModes[index + 1]}
+                  type="date"
+                  variant="bordered"
+                  defaultValue={item.date}
+                  className="max-w-xs"
+                  baseRef={(node) => {
+                    const map = getMap();
+                    if (node) {
+                      map.set(
+                        item.id + "_" + column_date,
+                        node.querySelector("input").value
+                      );
+                    } else {
+                      map.delete(item.id + "_" + column_date);
+                    }
+                  }}
+                  // onChange={handleChange(item, index)}
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  isReadOnly={!editModes[index + 1]}
+                  type="text"
+                  variant="bordered"
+                  defaultValue={item.description}
+                  className="max-w-xs"
+                  baseRef={(node) => {
+                    const map = getMap();
+                    if (node) {
+                      map.set(
+                        item.id + "_" + column_description,
+                        node.querySelector("input").value
+                      );
+                    } else {
+                      map.delete(item.id + "_" + column_description);
+                    }
+                  }}
+                  // onChange={handleChange(item, index)}
+                />
+              </TableCell>
+              <TableCell>
+                <Select
+                  aria-labelledby={list.map((objeto) => objeto.name).join(",")}
+                  variant="bordered"
+                  items={list}
+                  placeholder={item.branchOffice.name}
+                >
+                  {(sucursal) => (
+                    <SelectItem key={sucursal.id}>{sucursal.name}</SelectItem>
+                  )}
+                </Select>
+              </TableCell>
+              <TableCell>
+                <Input
+                  isReadOnly={!editModes[index + 1]}
+                  type="text"
+                  variant="bordered"
+                  defaultValue={item.detail}
+                  className="max-w-xs"
+                  baseRef={(node) => {
+                    const map = getMap();
+                    if (node) {
+                      map.set(
+                        item.id + "_" + column_detail,
+                        node.querySelector("input").value
+                      );
+                    } else {
+                      map.delete(item.id + "_" + column_detail);
+                    }
+                  }}
+                  // onChange={handleChange(item, index)}
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  isReadOnly={!editModes[index + 1]}
+                  type="number"
+                  variant="bordered"
+                  defaultValue={item.balance}
+                  className="max-w-xs"
+                  startContent={
+                    <div className="pointer-events-none flex items-center">
+                      <span className="text-default-400 text-small">$</span>
+                    </div>
                   }
-                }}
-                // onChange={handleChange(item, index)}
-              />
-            </TableCell>
-            <TableCell>
-              <Input
-                isReadOnly={!editModes[index + 1]}
-                type="text"
-                variant="bordered"
-                defaultValue={item.description}
-                className="max-w-xs"
-                baseRef={(node) => {
-                  const map = getMap();
-                  if (node) {
-                    map.set(
-                      item.id + "_" + column_description,
-                      node.querySelector("input").value
-                    );
-                  } else {
-                    map.delete(item.id + "_" + column_description);
-                  }
-                }}
-                // onChange={handleChange(item, index)}
-              />
-            </TableCell>
-            <TableCell>
-              <Select
-                aria-labelledby={list.map(objeto => objeto.name).join(",")}
-                variant="bordered"
-                items={list}
-                placeholder={item.branchOffice.name}
-              >
-                {(sucursal) => (
-                  <SelectItem key={sucursal.id}>{sucursal.name}</SelectItem>
-                )}
-              </Select>
-            </TableCell>
-            <TableCell>
-              <Input
-                isReadOnly={!editModes[index + 1]}
-                type="text"
-                variant="bordered"
-                defaultValue={item.detail}
-                className="max-w-xs"
-                baseRef={(node) => {
-                  const map = getMap();
-                  if (node) {
-                    map.set(
-                      item.id + "_" + column_detail,
-                      node.querySelector("input").value
-                    );
-                  } else {
-                    map.delete(item.id + "_" + column_detail);
-                  }
-                }}
-                // onChange={handleChange(item, index)}
-              />
-            </TableCell>
-            <TableCell>
-              <Input
-                isReadOnly={!editModes[index + 1]}
-                type="number"
-                variant="bordered"
-                defaultValue={item.balance}
-                className="max-w-xs"
-                startContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">$</span>
-                  </div>
-                }
-                baseRef={(node) => {
-                  const map = getMap();
-                  if (node) {
-                    map.set(
-                      item.id + "_" + column_balance,
-                      node.querySelector("input").value
-                    );
-                  } else {
-                    map.delete(item.id + "_" + column_balance);
-                  }
-                }}
-                // onChange={handleChange(item, index)}
-              />
-            </TableCell>
-            <TableCell>
-              <div className="relative flex items-center gap-2">
-                <Tooltip content="Editar Extracto">
-                  <span
-                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                    onClick={() => handleEditClick(index + 1)}
-                  >
-                    <EditIcon />
-                  </span>
-                </Tooltip>
-                <Tooltip color="danger" content="Eliminar Extracto">
-                  <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                    <DeleteIcon />
-                  </span>
-                </Tooltip>
-                <Tooltip color="success" content="Actualizar Extracto">
-                  <span
-                    className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
-                    onClick={() => handleValidateClick(item)}
-                  >
-                    <CheckIcon />
-                  </span>
-                </Tooltip>
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+                  baseRef={(node) => {
+                    const map = getMap();
+                    if (node) {
+                      map.set(
+                        item.id + "_" + column_balance,
+                        node.querySelector("input").value
+                      );
+                    } else {
+                      map.delete(item.id + "_" + column_balance);
+                    }
+                  }}
+                  // onChange={handleChange(item, index)}
+                />
+              </TableCell>
+              <TableCell>
+                <div className="relative flex items-center gap-2">
+                  <Tooltip content="Editar Extracto">
+                    <span
+                      className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                      onClick={() => handleEditClick(index + 1)}
+                    >
+                      <EditIcon />
+                    </span>
+                  </Tooltip>
+                  <Tooltip color="danger" content="Eliminar Extracto">
+                    <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                      <DeleteIcon />
+                    </span>
+                  </Tooltip>
+                  <Tooltip color="success" content="Actualizar Extracto">
+                    <span
+                      className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
+                      onClick={() => handleValidateClick(item)}
+                    >
+                      <CheckIcon />
+                    </span>
+                  </Tooltip>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
   );
 };
 

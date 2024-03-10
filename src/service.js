@@ -1,7 +1,8 @@
 const baseurl = "https://localhost:44377";
 
 export const getBanks = async () => {
-    try {
+  try {
+      console.log("🦅 ~ getBanks ~ getBanks /Bank");  
       const response = await fetch(baseurl + '/Bank');
       return await response.json();
     } catch {
@@ -11,6 +12,7 @@ export const getBanks = async () => {
 
 export const getBranchOffice = async () => {
   try {
+    console.log("🦅 ~ getBranchOffice ~ getBranchOffice /BranchOffice");  
     const response = await fetch(baseurl + "/BranchOffice");
     return await response.json();
   } catch {
@@ -20,6 +22,7 @@ export const getBranchOffice = async () => {
 
 export const getExtractsByBank = async (idbank) => {
   try {
+    console.log("🦅 ~ getExtractsByBank ~ getExtractsByBank /Extract/Bank/");  
     const response = await fetch(baseurl + "/Extract/Bank/" + idbank);
     return await response.json();
   } catch {

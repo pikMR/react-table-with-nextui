@@ -35,9 +35,10 @@ const Tabla = ({ tableData, listData }) => {
   const itemsRef = useRef(null);
 
   useEffect(() => {
-    console.log("🚀 ~ Tabla.useEffect");
-    setDatos(tableData);
-    setList(listData);
+    if (tableData.length !== 0) {
+      setDatos(tableData);
+      setList(listData); 
+    }
   }, [tableData, listData]);
 
   const onClear = React.useCallback(() => {
@@ -53,8 +54,6 @@ const Tabla = ({ tableData, listData }) => {
   }, []);
 
   const handleNewExtracto = () => {
-    // Añadir una nueva fila vacía al estado de los datos
-    console.log("🚀 ~ handleNewExtracto ~ handleNewExtracto:");
     const nuevoExtracto = {
       id: "",
       date: new Date().toISOString().split("T")[0],
@@ -107,7 +106,6 @@ const Tabla = ({ tableData, listData }) => {
   };
 
   const handleValidateClick = async (item) => {
-    console.log("🚀 ~ handleValidateClick ~ item:", item)
     var map = getMap();
     var nuevoValorDate = map.get(item.id + "_" + column_date);
     var nuevoValorBalance = map.get(item.id + "_" + column_balance);
@@ -136,8 +134,6 @@ const Tabla = ({ tableData, listData }) => {
 
   const filteredItems = React.useMemo(() => {
     let filteredExtracts = [...datos];
-    console.log("🚀 ~ filteredItems ~ filteredExtracts:", filteredExtracts);
-
     if (hasSearchFilter) {
       if (filterValue.length > 3) {
         filteredExtracts = filteredExtracts.filter(

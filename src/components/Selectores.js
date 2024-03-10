@@ -1,69 +1,80 @@
 import Tabla from "./Tabla";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Tabs, Tab } from "@nextui-org/tabs";
 import { Card, CardBody } from "@nextui-org/card";
 import { getBanks, getExtractsByBank, getBranchOffice } from "../service";
 
 export const Selectores = () => {
+  const [fillBank, setFillBank] = useState(false);
   const [tabs, setTabs] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [listData, setListData] = useState([]);
-  const [selected, setSelected] = useState(0);
-  // const [loading, setLoading] = useState(true);
-
-  const handleTabChange = useCallback((newSelected) => {
-    console.log("🚀 ~ handleTabChange ~ newSelected:", newSelected)
-    setSelected(newSelected);
-  }, []);
+  const [selected, setSelected] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
     try {
-      const fetchBanks = await getBanks();
-      console.log("🚀 ~ fetchData ~ fetchBanks:", fetchBanks)
-      const fetchBranchOffice = await getBranchOffice();
-      console.log("🚀 ~ fetchData ~ fetchBranchOffice:", fetchBranchOffice)
-
-      if (fetchBanks.banks.length > 0) {
-        setTabs(fetchBanks.banks);
-        const fetchExtractsByBank = await getExtractsByBank(fetchBanks.banks[selected].id);
-
-        if (fetchExtractsByBank.extracts.length > 0) {
-          setTableData(fetchExtractsByBank.extracts);
-          setListData(fetchBranchOffice.branchOffices);  
-        }
-        // setLoading(false);
+      setLoading(true);
+      if (!fillBank) {
+        setFillBank(true);
+        await getBanks().then(async (fetchBank) => {
+          setTabs(fetchBank.banks);
+          await getExtractsByBank(fetchBank.banks[selected ?? 0].id).then(
+            async (fetchExtract) => {
+              const fetchBranchOffice = await getBranchOffice();
+              setTableData(fetchExtract.extracts);
+              setListData(fetchBranchOffice.branchOffices);
+            }
+          );
+        });
       }
     } catch (error) {
       console.log("🐗 ~ fetchData ~ error:", error);
-      // setLoading(false);
+    } finally {
+      setLoading(false);
     }
-  }, [selected]);
+  }, [fillBank, selected]);
 
-  useEffect(() => {
-    console.log("🚀 ~ Selectores.useEffect");
-    fetchData();
-  }, [selected, fetchData]);
-
-  const memoizedTabs = useMemo(() => tabs, [tabs]);
+useEffect(() => {
+  fetchData();
+}, [selected, fetchData]);
+  
+  const handleTabChange = useCallback((newSelected) => {
+    // eslint-disable-next-line eqeqeq, no-mixed-operators
+    if (selected === null && newSelected == 0 && listData?.length !== 0) {
+      // render first reload page when all data is loaded.
+      setSelected(newSelected);
+    // eslint-disable-next-line eqeqeq, no-mixed-operators
+    } else if (selected !== null && newSelected != selected) {
+      // render when selected tab
+      setTableData([]);
+      setFillBank(false);
+      setSelected(newSelected);
+    }
+  }, [listData, selected]);
 
   return (
-    <Tabs
-      aria-label="Tabs"
-      selectedKey={selected}
-      defaultSelectedKey={0}
-      onSelectionChange={handleTabChange}
-    >
-      {memoizedTabs?.map((item, index) => (
-        <Tab key={index} title={item.name}>
-          <Card>
-            <CardBody>
-              <Tabla tableData={tableData} listData={listData}></Tabla>
-              {/* {<pre>tableData: {JSON.stringify(tableData, null, "\t")}</pre>}
-              {<pre>listData: {JSON.stringify(listData, null, "\t")}</pre>} */}
-            </CardBody>
-          </Card>
-        </Tab>
-      ))}
-    </Tabs>
+    <>
+      {loading ? (
+        <p>Cargando...</p>
+      ) : (
+        <Tabs
+          aria-label="Tabs"
+          selectedKey={selected}
+          defaultSelectedKey={0}
+          onSelectionChange={handleTabChange}
+        >
+          {tabs?.map((item, index) => (
+            <Tab key={index} title={item.name}>
+              <Card>
+                <CardBody>
+                  <Tabla tableData={tableData} listData={listData}></Tabla>
+                </CardBody>
+              </Card>
+            </Tab>
+          ))}
+        </Tabs>
+      )}
+    </>
   );
 };

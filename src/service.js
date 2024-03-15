@@ -38,8 +38,32 @@ export const putExtract = async (extract) => {
       body: JSON.stringify(extract),
     };
     const response = await fetch(baseurl + "/Extract", requestOptions);
-    return await response.text();
+    if (response.status !== 200) {
+      return response;
+    } else {
+      return await response.text();
+    }
   } catch {
     throw new Error(`error al obtener los extractos con el extracto ${extract.id}`);
+  }
+};
+
+export const postExtract = async (extract) => {
+  try {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(extract),
+    };
+    const response = await fetch(baseurl + "/Extract", requestOptions);
+    if (response.status !== 200) {
+      return response;
+    } else {
+      return await response.text(); 
+    }
+  } catch {
+    throw new Error(
+      `error al obtener los extractos con el extracto ${extract.id}`
+    );
   }
 };

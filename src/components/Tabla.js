@@ -9,7 +9,7 @@ import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { useGlobalState } from './GlobalState'; // Ajusta la ruta según tu estructura de carpetas
-import { putExtract } from "../service";
+import { putExtract, postExtract } from "../service";
 
 import {
   Table,
@@ -24,15 +24,14 @@ const Tabla = ({ tableData, listData }) => {
   const column_date = "date";
   const column_description = "description";
   const column_detail = "detail";
-  const column_balance = "balance";
-  
+  const column_balance = "balance"; 
+  const column_branchoffice = "branchOffice";
   const { openModal } = useGlobalState(); // Utilizamos el estado global
   const [filterValue, setFilterValue] = React.useState("");
   const hasSearchFilter = Boolean(filterValue);
   const [editModes, setEditModes] = useState({});
   const [datos, setDatos] = useState(tableData);
   const [list, setList] = useState(listData);
-  const itemsRef = useRef(null);
 
   useEffect(() => {
     if (tableData.length !== 0) {
@@ -53,6 +52,29 @@ const Tabla = ({ tableData, listData }) => {
     }
   }, []);
 
+  const handleSelectField = (event, item, field) => {
+    const newValue = event.target.value;
+    if (item.id && newValue)
+    {
+      const updateDatos = [...datos];
+      const extracto = updateDatos.find((e) => e.id === item.id);
+      if (field === column_branchoffice) {
+        if (extracto[field].id !== newValue)
+        {
+          extracto[field].id = newValue;
+          console.log("💨 ", newValue);
+          setDatos(updateDatos);
+        }
+      } else if (extracto[field] !== newValue) {
+        extracto[field] = newValue;
+        console.log("💨 ", extracto[field], newValue);
+        setDatos(updateDatos);
+      }
+    } else if(!item.id) {
+      console.log("👶🏻");
+    }
+  };
+
   const handleNewExtracto = () => {
     const nuevoExtracto = {
       id: "",
@@ -64,15 +86,6 @@ const Tabla = ({ tableData, listData }) => {
     };
     setDatos((prevExtractos) => [...prevExtractos, nuevoExtracto]);
   };
-
-
-  function getMap() {
-    if (!itemsRef.current) {
-      // Initialize the Map on first usage.
-      itemsRef.current = new Map();
-    }
-    return itemsRef.current;
-  }
 
   const topContent = React.useMemo(() => {
     return (
@@ -106,29 +119,50 @@ const Tabla = ({ tableData, listData }) => {
   };
 
   const handleValidateClick = async (item) => {
-    var map = getMap();
-    var nuevoValorDate = map.get(item.id + "_" + column_date);
-    var nuevoValorBalance = map.get(item.id + "_" + column_balance);
-    var nuevoValorDescription = map.get(item.id + "_" + column_description);
-    var nuevoValorDetail = map.get(item.id + "_" + column_detail);
-    item.date = nuevoValorDate ?? item.date;
-    item.balance = nuevoValorBalance ?? item.balance;
-    item.description = nuevoValorDescription ?? item.description;
-    item.detail = nuevoValorDetail ?? item.detail;
-    
     try {
-      var update = await putExtract(item);
-      console.log("update", update);
-      openModal([
-      "opaque",
-      "Extracto Actualizado",
-      "Se actualizó correctamente " + item.description,
-      ]);  
+      if (item.id === "") {
+        var create = await postExtract(item).then(async (result) => {
+          if (result.status) {
+            openModal([
+              "blur",
+              "Error en la creación del extracto.",
+              "No se creó correctamente " + item.description,
+            ]); 
+          } else {
+            openModal([
+              "opaque",
+              "Extracto Creado",
+              "Se creó correctamente " + item.description,
+            ]);   
+          }
+        });
+        console.log("create", create);
+        
+      } else {
+        var update = await putExtract(item).then(async (result) => {
+          if (result.status) {
+            openModal([
+              "blur",
+              "Error en la actualización del extracto.",
+              "No se actualizó correctamente " + item.description,
+            ]);  
+          } else {
+            openModal([
+              "opaque",
+              "Extracto Actualizado",
+              "Se actualizó correctamente " + item.description,
+            ]);  
+          }
+        });
+        console.log("update", update);
+      }
+
     } catch (err) {
       openModal([
-      "opaque",
-      "Extracto NO Actualizado",
-      "No Se actualizó correctamente " + item.description,]); 
+        "blur",
+        "Error no esperado",
+        "Operación no aceptada " + item.description,
+      ]); 
     }
   };
 
@@ -154,6 +188,7 @@ const Tabla = ({ tableData, listData }) => {
   }, [datos, hasSearchFilter, filterValue]);
 
   return (
+    <>
       <Table
         aria-label="Example static collection table"
         topContent={topContent}
@@ -177,18 +212,9 @@ const Tabla = ({ tableData, listData }) => {
                   variant="bordered"
                   defaultValue={item.date}
                   className="max-w-xs"
-                  baseRef={(node) => {
-                    const map = getMap();
-                    if (node) {
-                      map.set(
-                        item.id + "_" + column_date,
-                        node.querySelector("input").value
-                      );
-                    } else {
-                      map.delete(item.id + "_" + column_date);
-                    }
-                  }}
-                  // onChange={handleChange(item, index)}
+                  onBlur={(event) =>
+                    handleSelectField(event, item, column_date)
+                  }
                 />
               </TableCell>
               <TableCell>
@@ -198,18 +224,9 @@ const Tabla = ({ tableData, listData }) => {
                   variant="bordered"
                   defaultValue={item.description}
                   className="max-w-xs"
-                  baseRef={(node) => {
-                    const map = getMap();
-                    if (node) {
-                      map.set(
-                        item.id + "_" + column_description,
-                        node.querySelector("input").value
-                      );
-                    } else {
-                      map.delete(item.id + "_" + column_description);
-                    }
-                  }}
-                  // onChange={handleChange(item, index)}
+                  onBlur={(event) =>
+                    handleSelectField(event, item, column_description)
+                  }
                 />
               </TableCell>
               <TableCell>
@@ -218,6 +235,7 @@ const Tabla = ({ tableData, listData }) => {
                   variant="bordered"
                   items={list}
                   placeholder={item.branchOffice.name}
+                  onChange={(event) => handleSelectField(event, item, column_branchoffice)}
                 >
                   {(sucursal) => (
                     <SelectItem key={sucursal.id}>{sucursal.name}</SelectItem>
@@ -231,18 +249,9 @@ const Tabla = ({ tableData, listData }) => {
                   variant="bordered"
                   defaultValue={item.detail}
                   className="max-w-xs"
-                  baseRef={(node) => {
-                    const map = getMap();
-                    if (node) {
-                      map.set(
-                        item.id + "_" + column_detail,
-                        node.querySelector("input").value
-                      );
-                    } else {
-                      map.delete(item.id + "_" + column_detail);
-                    }
-                  }}
-                  // onChange={handleChange(item, index)}
+                  onBlur={(event) =>
+                    handleSelectField(event, item, column_detail)
+                  }
                 />
               </TableCell>
               <TableCell>
@@ -257,18 +266,9 @@ const Tabla = ({ tableData, listData }) => {
                       <span className="text-default-400 text-small">$</span>
                     </div>
                   }
-                  baseRef={(node) => {
-                    const map = getMap();
-                    if (node) {
-                      map.set(
-                        item.id + "_" + column_balance,
-                        node.querySelector("input").value
-                      );
-                    } else {
-                      map.delete(item.id + "_" + column_balance);
-                    }
-                  }}
-                  // onChange={handleChange(item, index)}
+                  onBlur={(event) =>
+                    handleSelectField(event, item, column_balance)
+                  }
                 />
               </TableCell>
               <TableCell>
@@ -300,6 +300,7 @@ const Tabla = ({ tableData, listData }) => {
           ))}
         </TableBody>
       </Table>
+    </>
   );
 };
 

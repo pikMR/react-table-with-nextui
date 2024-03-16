@@ -38,7 +38,7 @@ export const putExtract = async (extract) => {
       body: JSON.stringify(extract),
     };
     const response = await fetch(baseurl + "/Extract", requestOptions);
-    if (response.status !== 200) {
+    if (!response.ok) {
       return response;
     } else {
       return await response.text();
@@ -56,10 +56,10 @@ export const postExtract = async (extract) => {
       body: JSON.stringify(extract),
     };
     const response = await fetch(baseurl + "/Extract", requestOptions);
-    if (response.status !== 200) {
+    if (!response.ok) {
       return response;
     } else {
-      return await response.text(); 
+      return await response.text();
     }
   } catch {
     throw new Error(

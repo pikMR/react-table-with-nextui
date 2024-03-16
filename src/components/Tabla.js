@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { AddIcon } from "./icons/AddIcon";
 import { DeleteIcon } from "./icons/DeleteIcon";
 import { CheckIcon } from "./icons/CheckIcon";
@@ -20,7 +20,7 @@ import {
   TableCell,
 } from "@nextui-org/table";
 
-const Tabla = ({ tableData, listData }) => {
+const Tabla = ({ tableData, listData, idBank }) => {
   const column_date = "date";
   const column_description = "description";
   const column_detail = "detail";
@@ -53,41 +53,43 @@ const Tabla = ({ tableData, listData }) => {
   }, []);
 
   const handleSelectField = (event, item, field) => {
+    console.log("🚀 handleSelectField", event, item, field);
     const newValue = event.target.value;
-    if (item.id && newValue)
+    if (newValue)
     {
       const updateDatos = [...datos];
       const extracto = updateDatos.find((e) => e.id === item.id);
+
       if (field === column_branchoffice) {
+        // select elements
         if (extracto[field].id !== newValue)
         {
           extracto[field].id = newValue;
-          console.log("💨 ", newValue);
+          console.log("💨 select value ", newValue);
           setDatos(updateDatos);
         }
       } else if (extracto[field] !== newValue) {
+        // input elements
         extracto[field] = newValue;
-        console.log("💨 ", extracto[field], newValue);
+        console.log("💨 input value ", extracto[field], newValue);
         setDatos(updateDatos);
       }
-    } else if(!item.id) {
-      console.log("👶🏻");
     }
   };
 
-  const handleNewExtracto = () => {
-    const nuevoExtracto = {
-      id: "",
-      date: new Date().toISOString().split("T")[0],
-      description: "",
-      branchOffice: "",
-      detail: "",
-      balance: 0,
-    };
-    setDatos((prevExtractos) => [...prevExtractos, nuevoExtracto]);
-  };
-
   const topContent = React.useMemo(() => {
+    const handleNewExtracto = () => {
+        const nuevoExtracto = {
+          date: new Date().toISOString().split("T")[0],
+          description: "",
+          branchOffice: { id: "" },
+          bank: { id: idBank },
+          detail: "",
+          balance: 0,
+        };
+        setDatos((prevExtractos) => [...prevExtractos, nuevoExtracto]);
+    };
+    
     return (
       <div className="flex justify-between gap-3 items-center">
         <Button
@@ -108,20 +110,20 @@ const Tabla = ({ tableData, listData }) => {
         />
       </div>
     );
-  }, [filterValue, onSearchChange, onClear]);
+  }, [filterValue, onSearchChange, idBank, onClear]);
 
   const handleEditClick = (rowKey) => {
-    // Actualiza el estado del modo de edición específico de la fila al hacer clic en Editar
     setEditModes((prevEditModes) => ({
       ...prevEditModes,
-      [rowKey]: !prevEditModes[rowKey], // Toggle el modo de edición para la fila
+      [rowKey]: !prevEditModes[rowKey], // Toggle edition
     }));
   };
 
   const handleValidateClick = async (item) => {
     try {
-      if (item.id === "") {
+      if (!item.id) {
         var create = await postExtract(item).then(async (result) => {
+          
           if (result.status) {
             openModal([
               "blur",
@@ -133,11 +135,16 @@ const Tabla = ({ tableData, listData }) => {
               "opaque",
               "Extracto Creado",
               "Se creó correctamente " + item.description,
-            ]);   
+            ]);
+            
+            const updateDatos = [...datos];
+            const extracto = updateDatos.find((e) => e.id === item.id);
+            const branchOfficeSelectedName = list.find((e) => e.id === extracto.branchOffice.id).name;
+            extracto.id = result;
+            extracto.branchOffice.name = branchOfficeSelectedName;
+            setDatos(updateDatos);
           }
-        });
-        console.log("create", create);
-        
+        });        
       } else {
         var update = await putExtract(item).then(async (result) => {
           if (result.status) {
@@ -154,7 +161,6 @@ const Tabla = ({ tableData, listData }) => {
             ]);  
           }
         });
-        console.log("update", update);
       }
 
     } catch (err) {

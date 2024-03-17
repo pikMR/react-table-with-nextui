@@ -9,7 +9,7 @@ import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { useGlobalState } from './GlobalState';
-import { putExtract, postExtract } from "../service";
+import { putExtract, postExtract, deleteExtract } from "../service";
 
 import {
   Table,
@@ -174,6 +174,46 @@ const Tabla = ({ tableData, listData, idBank }) => {
     }
   };
 
+  const handleDeleteClick = async (item) => {
+    try {
+      if (!item.id) {
+        openModal([
+          "opaque",
+          "Extracto Eliminado.",
+          "Se eliminó correctamente " + item.description,
+        ]);
+        const updateDatos = [...datos];
+        setDatos(updateDatos.filter((e) => e.id !== item.id));  
+        setCreateDisabled(false);
+      } else {
+        await deleteExtract(item.id).then(async (result) => {
+          if (result.status) {
+            openModal([
+              "blur",
+              "Error en la eliminación del extracto.",
+              "No se eliminó correctamente " + item.description,
+            ]);
+          } else {
+            openModal([
+              "opaque",
+              "Extracto Eliminado.",
+              "Se eliminó correctamente " + item.description,
+            ]);
+            const updateDatos = [...datos];
+            setDatos(updateDatos.filter((e) => e.id !== item.id));
+            setCreateDisabled(false);
+          }
+        });
+      }
+    } catch (err) {
+      openModal([
+        "blur",
+        "Error no esperado",
+        "Operación no aceptada " + item.description,
+      ]);
+    }
+  };
+
   const filteredItems = React.useMemo(() => {
     let filteredExtracts = [...datos];
       if (filterValue.length > 3) {
@@ -241,7 +281,9 @@ const Tabla = ({ tableData, listData, idBank }) => {
                   variant="bordered"
                   items={list}
                   placeholder={item.branchOffice.name}
-                  onChange={(event) => handleSelectField(event, item, column_branchoffice)}
+                  onChange={(event) =>
+                    handleSelectField(event, item, column_branchoffice)
+                  }
                 >
                   {(sucursal) => (
                     <SelectItem key={sucursal.id}>{sucursal.name}</SelectItem>
@@ -288,7 +330,10 @@ const Tabla = ({ tableData, listData, idBank }) => {
                     </span>
                   </Tooltip>
                   <Tooltip color="danger" content="Eliminar Extracto">
-                    <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                    <span
+                      className="text-lg text-danger cursor-pointer active:opacity-50"
+                      onClick={() => handleDeleteClick(item)}
+                    >
                       <DeleteIcon />
                     </span>
                   </Tooltip>

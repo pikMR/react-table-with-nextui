@@ -67,3 +67,16 @@ export const postExtract = async (extract) => {
     );
   }
 };
+
+export const deleteExtract = async (idExtract) => {
+  try {
+    const response = await fetch(baseurl + "/Extract/" + idExtract, {method: 'DELETE'});
+    if (!response.ok) {
+      return response;
+    } else {
+      return await response.text();
+    }
+  } catch {
+    throw new Error(`error al eliminar ${idExtract}`);
+  }
+};

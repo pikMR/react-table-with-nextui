@@ -8,7 +8,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
-import { useGlobalState } from './GlobalState'; // Ajusta la ruta según tu estructura de carpetas
+import { useGlobalState } from './GlobalState';
 import { putExtract, postExtract } from "../service";
 
 import {
@@ -28,10 +28,10 @@ const Tabla = ({ tableData, listData, idBank }) => {
   const column_branchoffice = "branchOffice";
   const { openModal } = useGlobalState(); // Utilizamos el estado global
   const [filterValue, setFilterValue] = React.useState("");
-  const hasSearchFilter = Boolean(filterValue);
   const [editModes, setEditModes] = useState({});
   const [datos, setDatos] = useState(tableData);
   const [list, setList] = useState(listData);
+  const [createDisabled, setCreateDisabled] = useState(false);
 
   useEffect(() => {
     if (tableData.length !== 0) {
@@ -79,23 +79,25 @@ const Tabla = ({ tableData, listData, idBank }) => {
 
   const topContent = React.useMemo(() => {
     const handleNewExtracto = () => {
-        const nuevoExtracto = {
-          date: new Date().toISOString().split("T")[0],
-          description: "",
-          branchOffice: { id: "" },
-          bank: { id: idBank },
-          detail: "",
-          balance: 0,
-        };
-        setDatos((prevExtractos) => [...prevExtractos, nuevoExtracto]);
+      const nuevoExtracto = {
+        date: new Date().toISOString().split("T")[0],
+        description: "",
+        branchOffice: listData[0],
+        bank: { id: idBank },
+        detail: "",
+        balance: 0,
+      };
+      setCreateDisabled(true);
+      setDatos((prevExtractos) => [...prevExtractos, nuevoExtracto]);
     };
-    
+
     return (
       <div className="flex justify-between gap-3 items-center">
         <Button
           color="primary"
           endContent={<AddIcon />}
           onClick={handleNewExtracto}
+          isDisabled={createDisabled}
         >
           Nuevo Extracto
         </Button>
@@ -110,7 +112,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
         />
       </div>
     );
-  }, [filterValue, onSearchChange, idBank, onClear]);
+  }, [listData, createDisabled, filterValue, onSearchChange, idBank, onClear]);
 
   const handleEditClick = (rowKey) => {
     setEditModes((prevEditModes) => ({
@@ -122,8 +124,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
   const handleValidateClick = async (item) => {
     try {
       if (!item.id) {
-        var create = await postExtract(item).then(async (result) => {
-          
+        await postExtract(item).then(async (result) => {
           if (result.status) {
             openModal([
               "blur",
@@ -142,11 +143,12 @@ const Tabla = ({ tableData, listData, idBank }) => {
             const branchOfficeSelectedName = list.find((e) => e.id === extracto.branchOffice.id).name;
             extracto.id = result;
             extracto.branchOffice.name = branchOfficeSelectedName;
+            setCreateDisabled(false);
             setDatos(updateDatos);
           }
         });        
       } else {
-        var update = await putExtract(item).then(async (result) => {
+        await putExtract(item).then(async (result) => {
           if (result.status) {
             openModal([
               "blur",
@@ -174,24 +176,22 @@ const Tabla = ({ tableData, listData, idBank }) => {
 
   const filteredItems = React.useMemo(() => {
     let filteredExtracts = [...datos];
-    if (hasSearchFilter) {
       if (filterValue.length > 3) {
         filteredExtracts = filteredExtracts.filter(
           (extract) =>
             extract.description
               .toLowerCase()
               .includes(filterValue.toLowerCase()) ||
-            // extract.sucursal
-            //   .toLowerCase()
-            //   .includes(filterValue.toLowerCase()) ||
+            extract.branchOffice.name
+               .toLowerCase()
+               .includes(filterValue.toLowerCase()) ||
             extract.detail.toLowerCase().includes(filterValue.toLowerCase()) ||
             extract.date.includes(filterValue)
         );
-      }
     }
 
     return filteredExtracts;
-  }, [datos, hasSearchFilter, filterValue]);
+  }, [datos, filterValue]);
 
   return (
     <>

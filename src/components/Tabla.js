@@ -22,7 +22,7 @@ import {
 
 const Tabla = ({ tableData, listData, idBank }) => {
   const column_date = "date";
-  const column_description = "description";
+  const column_description = "name";
   const column_detail = "detail";
   const column_balance = "balance"; 
   const column_branchoffice = "branchOffice";
@@ -81,7 +81,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
     const handleNewExtracto = () => {
       const nuevoExtracto = {
         date: new Date().toISOString().split("T")[0],
-        description: "",
+        name: "",
         branchOffice: listData[0],
         bank: { id: idBank },
         detail: "",
@@ -129,13 +129,13 @@ const Tabla = ({ tableData, listData, idBank }) => {
             openModal([
               "blur",
               "Error en la creación del extracto.",
-              "No se creó correctamente " + item.description,
+              "No se creó correctamente " + item.name,
             ]); 
           } else {
             openModal([
               "opaque",
               "Extracto Creado",
-              "Se creó correctamente " + item.description,
+              "Se creó correctamente " + item.name,
             ]);
             
             const updateDatos = [...datos];
@@ -153,13 +153,13 @@ const Tabla = ({ tableData, listData, idBank }) => {
             openModal([
               "blur",
               "Error en la actualización del extracto.",
-              "No se actualizó correctamente " + item.description,
+              "No se actualizó correctamente " + item.name,
             ]);  
           } else {
             openModal([
               "opaque",
               "Extracto Actualizado",
-              "Se actualizó correctamente " + item.description,
+              "Se actualizó correctamente " + item.name,
             ]);  
           }
         });
@@ -169,7 +169,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
       openModal([
         "blur",
         "Error no esperado",
-        "Operación no aceptada " + item.description,
+        "Operación no aceptada " + item.name,
       ]); 
     }
   };
@@ -180,7 +180,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
         openModal([
           "opaque",
           "Extracto Eliminado.",
-          "Se eliminó correctamente " + item.description,
+          "Se eliminó correctamente " + item.name,
         ]);
         const updateDatos = [...datos];
         setDatos(updateDatos.filter((e) => e.id !== item.id));  
@@ -191,13 +191,13 @@ const Tabla = ({ tableData, listData, idBank }) => {
             openModal([
               "blur",
               "Error en la eliminación del extracto.",
-              "No se eliminó correctamente " + item.description,
+              "No se eliminó correctamente " + item.name,
             ]);
           } else {
             openModal([
               "opaque",
               "Extracto Eliminado.",
-              "Se eliminó correctamente " + item.description,
+              "Se eliminó correctamente " + item.name,
             ]);
             const updateDatos = [...datos];
             setDatos(updateDatos.filter((e) => e.id !== item.id));
@@ -209,7 +209,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
       openModal([
         "blur",
         "Error no esperado",
-        "Operación no aceptada " + item.description,
+        "Operación no aceptada " + item.name,
       ]);
     }
   };
@@ -219,7 +219,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
       if (filterValue.length > 3) {
         filteredExtracts = filteredExtracts.filter(
           (extract) =>
-            extract.description
+            extract.name
               .toLowerCase()
               .includes(filterValue.toLowerCase()) ||
             extract.branchOffice.name
@@ -268,7 +268,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
                   isReadOnly={!editModes[index + 1]}
                   type="text"
                   variant="bordered"
-                  defaultValue={item.description}
+                  defaultValue={item.name}
                   className="max-w-xs"
                   onBlur={(event) =>
                     handleSelectField(event, item, column_description)

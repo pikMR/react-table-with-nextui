@@ -27,3 +27,37 @@ code {
   color: white;
 }
 
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  /* Estilos para dispositivos pequeños */
+  @media screen and (max-width: 600px) {
+    th, td {
+      padding: 8px;
+    }
+    /* Oculta la cabecera de la tabla en dispositivos pequeños */
+    thead {
+      display: none;
+    }
+    /* Muestra los datos de la tabla en columnas apiladas */
+    tr {
+      display: block;
+      border-bottom: 2px solid #ddd;
+    }
+    td::before {
+      content: attr(data-label);
+      float: left;
+      font-weight: bold;
+    }
+  }

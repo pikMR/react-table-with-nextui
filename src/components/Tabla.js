@@ -11,15 +11,6 @@ import { Input } from "@nextui-org/input";
 import { useGlobalState } from './GlobalState';
 import { putExtract, postExtract, deleteExtract } from "../service";
 
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell,
-} from "@nextui-org/table";
-
 const Tabla = ({ tableData, listData, idBank }) => {
   const column_date = "date";
   const column_description = "name";
@@ -234,24 +225,23 @@ const Tabla = ({ tableData, listData, idBank }) => {
   }, [datos, filterValue]);
 
   return (
-    <>
-      <Table
+    
+      <table
         aria-label="Example static collection table"
         topContent={topContent}
         topContentPlacement="outside"
       >
-        <TableHeader>
-          <TableColumn>Fecha</TableColumn>
-          <TableColumn>Descripcion</TableColumn>
-          <TableColumn>Sucursal</TableColumn>
-          <TableColumn>Detalle</TableColumn>
-          <TableColumn>Saldo</TableColumn>
-          <TableColumn>ACCIONES</TableColumn>
-        </TableHeader>
-        <TableBody>
+        <tr>
+          <th>Fecha</th>
+          <th>Descripcion</th>
+          <th>Sucursal</th>
+          <th>Detalle</th>
+          <th>Saldo</th>
+          <th>ACCIONES</th>
+        </tr>
           {filteredItems.map((item, index) => (
-            <TableRow key={item.id + "_" + index + 1}>
-              <TableCell>
+            <tr key={item.id + "_" + index + 1}>
+              <td>
                 <Input
                   isReadOnly={!editModes[index + 1]}
                   type="date"
@@ -262,8 +252,8 @@ const Tabla = ({ tableData, listData, idBank }) => {
                     handleSelectField(event, item, column_date)
                   }
                 />
-              </TableCell>
-              <TableCell>
+              </td>
+              <td>
                 <Input
                   isReadOnly={!editModes[index + 1]}
                   type="text"
@@ -274,8 +264,8 @@ const Tabla = ({ tableData, listData, idBank }) => {
                     handleSelectField(event, item, column_description)
                   }
                 />
-              </TableCell>
-              <TableCell>
+              </td>
+              <td>
                 <Select
                   aria-labelledby={list.map((objeto) => objeto.name).join(",")}
                   variant="bordered"
@@ -289,8 +279,8 @@ const Tabla = ({ tableData, listData, idBank }) => {
                     <SelectItem key={sucursal.id}>{sucursal.name}</SelectItem>
                   )}
                 </Select>
-              </TableCell>
-              <TableCell>
+              </td>
+              <td>
                 <Input
                   isReadOnly={!editModes[index + 1]}
                   type="text"
@@ -301,8 +291,8 @@ const Tabla = ({ tableData, listData, idBank }) => {
                     handleSelectField(event, item, column_detail)
                   }
                 />
-              </TableCell>
-              <TableCell>
+              </td>
+              <td>
                 <Input
                   isReadOnly={!editModes[index + 1]}
                   type="number"
@@ -318,8 +308,8 @@ const Tabla = ({ tableData, listData, idBank }) => {
                     handleSelectField(event, item, column_balance)
                   }
                 />
-              </TableCell>
-              <TableCell>
+              </td>
+              <td>
                 <div className="relative flex items-center gap-2">
                   <Tooltip content="Editar Extracto">
                     <span
@@ -346,12 +336,10 @@ const Tabla = ({ tableData, listData, idBank }) => {
                     </span>
                   </Tooltip>
                 </div>
-              </TableCell>
-            </TableRow>
+              </td>
+            </tr>
           ))}
-        </TableBody>
-      </Table>
-    </>
+      </table>
   );
 };
 

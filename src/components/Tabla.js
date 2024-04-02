@@ -228,12 +228,10 @@ const Tabla = ({ tableData, listData, idBank }) => {
   }, [datos, filterValue]);
 
   return (
-    
-      <table
-        aria-label="Example static collection table"
-        topContent={topContent}
-        topContentPlacement="outside"
-      >
+    <>
+    {topContent}
+    <table>
+      <thead>
         <tr>
           <th>Fecha</th>
           <th>Descripcion</th>
@@ -242,107 +240,109 @@ const Tabla = ({ tableData, listData, idBank }) => {
           <th>Saldo</th>
           <th>ACCIONES</th>
         </tr>
-          {filteredItems.map((item, index) => (
-            <tr key={item.id + "_" + index + 1}>
-              <td>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="date"
-                  variant="bordered"
-                  defaultValue={item.date}
-                  className="max-w-xs"
-                  onBlur={(event) =>
-                    handleSelectField(event, item, column_date)
-                  }
-                />
-              </td>
-              <td>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="text"
-                  variant="bordered"
-                  defaultValue={item.name}
-                  className="max-w-xs"
-                  onBlur={(event) =>
-                    handleSelectField(event, item, column_description)
-                  }
-                />
-              </td>
-              <td>
-                <Select
-                  aria-labelledby={list.map((objeto) => objeto.name).join(",")}
-                  variant="bordered"
-                  items={list}
-                  placeholder={item.branchOffice.name}
-                  onChange={(event) =>
-                    handleSelectField(event, item, column_branchoffice)
-                  }
-                >
-                  {(sucursal) => (
-                    <SelectItem key={sucursal.id}>{sucursal.name}</SelectItem>
-                  )}
-                </Select>
-              </td>
-              <td>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="text"
-                  variant="bordered"
-                  defaultValue={item.detail}
-                  className="max-w-xs"
-                  onBlur={(event) =>
-                    handleSelectField(event, item, column_detail)
-                  }
-                />
-              </td>
-              <td>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="number"
-                  variant="bordered"
-                  defaultValue={item.balance}
-                  className="max-w-xs"
-                  startContent={
-                    <div className="pointer-events-none flex items-center">
-                      <span className="text-default-400 text-small">$</span>
-                    </div>
-                  }
-                  onBlur={(event) =>
-                    handleSelectField(event, item, column_balance)
-                  }
-                />
-              </td>
-              <td>
-                <div className="relative flex items-center gap-2">
-                  <Tooltip content="Editar Extracto">
-                    <span
-                      className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                      onClick={() => handleEditClick(index + 1)}
-                    >
-                      <EditIcon />
-                    </span>
-                  </Tooltip>
-                  <Tooltip color="danger" content="Eliminar Extracto">
-                    <span
-                      className="text-lg text-danger cursor-pointer active:opacity-50"
-                      onClick={() => handleDeleteClick(item)}
-                    >
-                      <DeleteIcon />
-                    </span>
-                  </Tooltip>
-                  <Tooltip color="success" content="Actualizar Extracto">
-                    <span
-                      className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
-                      onClick={() => handleValidateClick(item)}
-                    >
-                      <CheckIcon />
-                    </span>
-                  </Tooltip>
-                </div>
-              </td>
-            </tr>
-          ))}
+      </thead>
+      <tbody>
+        {filteredItems.map((item, index) => (
+          <tr key={item.id + "_" + index + 1}>
+            <td>
+              <Input
+                isReadOnly={!editModes[index + 1]}
+                type="date"
+                variant="bordered"
+                defaultValue={item.date}
+                className="max-w-xs"
+                onBlur={(event) => handleSelectField(event, item, column_date)}
+              />
+            </td>
+            <td>
+              <Input
+                isReadOnly={!editModes[index + 1]}
+                type="text"
+                variant="bordered"
+                defaultValue={item.name}
+                className="max-w-xs"
+                onBlur={(event) =>
+                  handleSelectField(event, item, column_description)
+                }
+              />
+            </td>
+            <td>
+              <Select
+                aria-labelledby={list.map((objeto) => objeto.name).join(",")}
+                variant="bordered"
+                items={list}
+                placeholder={item.branchOffice.name}
+                onChange={(event) =>
+                  handleSelectField(event, item, column_branchoffice)
+                }
+              >
+                {(sucursal) => (
+                  <SelectItem key={sucursal.id}>{sucursal.name}</SelectItem>
+                )}
+              </Select>
+            </td>
+            <td>
+              <Input
+                isReadOnly={!editModes[index + 1]}
+                type="text"
+                variant="bordered"
+                defaultValue={item.detail}
+                className="max-w-xs"
+                onBlur={(event) =>
+                  handleSelectField(event, item, column_detail)
+                }
+              />
+            </td>
+            <td>
+              <Input
+                isReadOnly={!editModes[index + 1]}
+                type="number"
+                variant="bordered"
+                defaultValue={item.balance}
+                className="max-w-xs"
+                startContent={
+                  <div className="pointer-events-none flex items-center">
+                    <span className="text-default-400 text-small">$</span>
+                  </div>
+                }
+                onBlur={(event) =>
+                  handleSelectField(event, item, column_balance)
+                }
+              />
+            </td>
+            <td>
+              <div className="relative flex items-center gap-2">
+                <Tooltip content="Editar Extracto">
+                  <span
+                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                    onClick={() => handleEditClick(index + 1)}
+                  >
+                    <EditIcon />
+                  </span>
+                </Tooltip>
+                <Tooltip color="danger" content="Eliminar Extracto">
+                  <span
+                    className="text-lg text-danger cursor-pointer active:opacity-50"
+                    onClick={() => handleDeleteClick(item)}
+                  >
+                    <DeleteIcon />
+                  </span>
+                </Tooltip>
+                <Tooltip color="success" content="Actualizar Extracto">
+                  <span
+                    className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
+                    onClick={() => handleValidateClick(item)}
+                  >
+                    <CheckIcon />
+                  </span>
+                </Tooltip>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
       </table>
+      </>
   );
 };
 

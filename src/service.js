@@ -4,7 +4,7 @@ export const getBanks = async () => {
   const url = `/Bank`;
   try {
       console.log(`🦅 ~ service.js ~ getBanks ~ ${url}`);  
-      const response = await fetch(baseurl + '/Bank');
+      const response = await fetch(baseurl + url);
       return await response.json();
     } catch {
         throw new Error('error al obtener los bancos.')
@@ -86,7 +86,7 @@ export const deleteExtract = async (idExtract) => {
 };
 
 export const getResumesByBankAndBranchOffice = async (idbank, idBranchOffice) => {
-  const url = `​/Resume​/Bank​/${idbank}​/BranchOffice​/${idBranchOffice}`;
+  const url = `/Resume/Bank/${idbank}/BranchOffice/${idBranchOffice}`;
   try {
     console.log(`🦅 ~ service.js ~ ${url}`);
     const response = await fetch(baseurl + url);
@@ -100,10 +100,8 @@ export const getResumesByBankAndBranchOffice = async (idbank, idBranchOffice) =>
   }
 };
 
-export const getResumesByBank = async (
-  idbank
-) => {
-  const url = `​/Resume​/Bank​/${idbank}​`;
+export const getResumesByBank = async (idbank) => {
+  const url = `/Resume/Bank/${idbank}`;
   try {
     console.log(`🦅 ~ service.js ~ ${url}`);
     const response = await fetch(baseurl + url);

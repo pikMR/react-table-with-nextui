@@ -71,8 +71,6 @@ useEffect(() => {
               <Card>
                 <CardBody>
                   <Resume
-                    tableData={tableData}
-                    listData={listData}
                     idBank={idBank}
                   ></Resume>
                 </CardBody>

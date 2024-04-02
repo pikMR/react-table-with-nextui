@@ -17,7 +17,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
   const column_detail = "detail";
   const column_balance = "balance"; 
   const column_branchoffice = "branchOffice";
-  const { openModal } = useGlobalState(); // Utilizamos el estado global
+  const { openModal, tableIsUpload } = useGlobalState(); // Utilizamos el estado global
   const [filterValue, setFilterValue] = React.useState("");
   const [editModes, setEditModes] = useState({});
   const [datos, setDatos] = useState(tableData);
@@ -136,6 +136,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
             extracto.branchOffice.name = branchOfficeSelectedName;
             setCreateDisabled(false);
             setDatos(updateDatos);
+            tableIsUpload();
           }
         });        
       } else {
@@ -151,7 +152,8 @@ const Tabla = ({ tableData, listData, idBank }) => {
               "opaque",
               "Extracto Actualizado",
               "Se actualizó correctamente " + item.name,
-            ]);  
+            ]);
+            tableIsUpload();
           }
         });
       }
@@ -193,6 +195,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
             const updateDatos = [...datos];
             setDatos(updateDatos.filter((e) => e.id !== item.id));
             setCreateDisabled(false);
+            tableIsUpload();
           }
         });
       }

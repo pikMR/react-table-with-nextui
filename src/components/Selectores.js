@@ -1,4 +1,5 @@
 import Tabla from "./Tabla";
+import Resume from "./Resumes/Resume";
 import { useEffect, useState, useCallback } from "react";
 import { Tabs, Tab } from "@nextui-org/tabs";
 import { Card, CardBody } from "@nextui-org/card";
@@ -69,7 +70,20 @@ useEffect(() => {
             <Tab key={index} title={item.name}>
               <Card>
                 <CardBody>
-                  <Tabla tableData={tableData} listData={listData} idBank={idBank}></Tabla>
+                  <Resume
+                    tableData={tableData}
+                    listData={listData}
+                    idBank={idBank}
+                  ></Resume>
+                </CardBody>
+              </Card>
+              <Card>
+                <CardBody>
+                  <Tabla
+                    tableData={tableData}
+                    listData={listData}
+                    idBank={idBank}
+                  ></Tabla>
                 </CardBody>
               </Card>
             </Tab>

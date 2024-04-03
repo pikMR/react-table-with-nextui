@@ -1,6 +1,6 @@
 
 import { BranchOfficeResume } from "./BranchOfficeResume";
-import { Card } from "@nextui-org/card";
+import { Card, CardBody } from "@nextui-org/card";
 import { useEffect, useState, useCallback } from "react";
 import { getResumesByBank } from "../../service";
 
@@ -18,22 +18,31 @@ const Resume = ({ idBank }) => {
   }, [fetchData]);
 
   return (
-    <Card
-      className="max-w-[400px]"
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        flexGrow: 4,
-        gap: "10px",
-      }}
-    >
-      {resumes?.map((item, index) => (
-        <div key={item.id + "_" + index + 1}>
-          <BranchOfficeResume {...item} />
-        </div>
-      ))}
-    </Card>
+    <>
+      <Card variant="solid" radius="none">
+        <CardBody>
+          <pre className="text-lg text-default-500 text-center">total: $10</pre>
+        </CardBody>
+      </Card>
+      <Card
+        variant="solid"
+        radius="none"
+        className="max-w-[400px]"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          flexGrow: 4,
+          gap: "10px",
+        }}
+      >
+        {resumes?.map((item, index) => (
+          <div key={item.id + "_" + index + 1}>
+            <BranchOfficeResume {...item} />
+          </div>
+        ))}
+      </Card>
+    </>
   );
 };
 

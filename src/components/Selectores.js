@@ -68,11 +68,11 @@ useEffect(() => {
         >
           {tabs?.map((item, index) => (
             <Tab key={index} title={item.name}>
-              <Card>
+              <Card
+                style={{ marginBottom: 10 }}
+              >
                 <CardBody>
-                  <Resume
-                    idBank={idBank}
-                  ></Resume>
+                  <Resume idBank={idBank}></Resume>
                 </CardBody>
               </Card>
               <Card>

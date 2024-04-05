@@ -10,7 +10,7 @@ import { Divider } from "@nextui-org/divider";
 export const BranchOfficeResume = ({ branchOffice, balanceFinal }) => {
   return (
     <Card className="max-w-[400px]">
-      <Tooltip content={branchOffice.name}>
+      <Tooltip content={branchOffice.name} disableAnimation color='foreground'>
         <CardHeader className="flex gap-3 px-3 py-0 text-medium">
           <div
             className="flex flex-col"

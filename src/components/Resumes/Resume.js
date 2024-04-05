@@ -1,4 +1,4 @@
-
+import { Snippet } from "@nextui-org/snippet";
 import { BranchOfficeResume } from "./BranchOfficeResume";
 import { Card, CardBody } from "@nextui-org/card";
 import { useEffect, useState, useCallback } from "react";
@@ -38,12 +38,24 @@ const Resume = ({ id, openingBalance }) => {
         }}
       >
         <CardBody className="result">
-          <pre className="text-lg text-default-500 text-center">
+          <p className="text-default-500 text-center">
             Saldo Inicial $ {openingBalance} | Saldo Actual $ {total}
-          </pre>
-          <pre className="text-lg text-default-500 text-center">
-            Total <text style={{ color: "#3fffa5" }}>$ {openingBalance + total}</text>
-          </pre>
+          </p>
+          <div className="text-center">
+            <Snippet
+              variant="shadow"
+              color="success"
+              tooltipProps={{
+                color: "foreground",
+                content: "Copiar el TOTAL",
+                disableAnimation: true,
+                placement: "right",
+                closeDelay: 0,
+              }}
+            >
+              {openingBalance + total}
+            </Snippet>
+          </div>
         </CardBody>
       </Card>
       <Card

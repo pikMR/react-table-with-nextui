@@ -8,7 +8,6 @@ import { Tooltip } from "@nextui-org/tooltip";
 import { Divider } from "@nextui-org/divider";
 
 export const BranchOfficeResume = ({ branchOffice, balanceFinal }) => {
-  debugger;
   return (
     <Card className="max-w-[400px]">
       <Tooltip content={branchOffice.name}>

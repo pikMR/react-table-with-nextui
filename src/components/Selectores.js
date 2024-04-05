@@ -3,6 +3,7 @@ import Resume from "./Resumes/Resume";
 import { useEffect, useState, useCallback } from "react";
 import { Tabs, Tab } from "@nextui-org/tabs";
 import { Card, CardBody } from "@nextui-org/card";
+import { Skeleton } from "@nextui-org/skeleton";
 import { getBanks, getExtractsByBank, getBranchOffice } from "../service";
 
 export const Selectores = () => {
@@ -12,11 +13,11 @@ export const Selectores = () => {
   const [tableData, setTableData] = useState([]);
   const [listData, setListData] = useState([]);
   const [selected, setSelected] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
-      setLoading(true);
+      setIsLoaded(false);
       if (!fillBank) {
         setFillBank(true);
         await getBanks().then(async (fetchBank) => {
@@ -33,7 +34,7 @@ export const Selectores = () => {
     } catch (error) {
       console.log("🐗 ~ fetchData ~ error:", error);
     } finally {
-      setLoading(false);
+      setIsLoaded(true);
     }
   }, [fillBank, selected]);
 
@@ -42,6 +43,7 @@ useEffect(() => {
 }, [selected, fetchData]);
   
   const handleTabChange = useCallback((newSelected) => {
+    setIsLoaded(false);
     // eslint-disable-next-line eqeqeq, no-mixed-operators
     if (selected === null && newSelected == 0 && listData?.length !== 0) {
       // render first reload page when all data is loaded.
@@ -57,9 +59,7 @@ useEffect(() => {
 
   return (
     <>
-      {loading ? (
-        <p>Cargando...</p>
-      ) : (
+      {
         <Tabs
           aria-label="Tabs"
           selectedKey={selected}
@@ -68,24 +68,26 @@ useEffect(() => {
         >
           {tabs?.map((item, index) => (
             <Tab key={index} title={item.name}>
-              <Card style={{ marginBottom: 10 }}>
-                <CardBody>
-                  <Resume {...bank} />
-                </CardBody>
-              </Card>
-              <Card>
-                <CardBody>
-                  <Tabla
-                    tableData={tableData}
-                    listData={listData}
-                    idBank={bank.id}
-                  ></Tabla>
-                </CardBody>
-              </Card>
+              <Skeleton className="rounded-lg" isLoaded={isLoaded}>
+                <Card style={{ marginBottom: 10 }}>
+                  <CardBody>
+                    <Resume {...bank} />
+                  </CardBody>
+                </Card>
+                <Card>
+                  <CardBody>
+                    <Tabla
+                      tableData={tableData}
+                      listData={listData}
+                      idBank={bank.id}
+                    ></Tabla>
+                  </CardBody>
+                </Card>
+              </Skeleton>
             </Tab>
           ))}
         </Tabs>
-      )}
+      }
     </>
   );
 };

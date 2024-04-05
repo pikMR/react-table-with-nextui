@@ -8,7 +8,7 @@ import { getBanks, getExtractsByBank, getBranchOffice } from "../service";
 export const Selectores = () => {
   const [fillBank, setFillBank] = useState(false);
   const [tabs, setTabs] = useState([]);
-  const [idBank, setIdBank] = useState(null);
+  const [bank, setBank] = useState(null);
   const [tableData, setTableData] = useState([]);
   const [listData, setListData] = useState([]);
   const [selected, setSelected] = useState(null);
@@ -21,9 +21,9 @@ export const Selectores = () => {
         setFillBank(true);
         await getBanks().then(async (fetchBank) => {
           setTabs(fetchBank.banks);
-          const idBankSelected = fetchBank.banks[selected ?? 0].id;
-          setIdBank(idBankSelected);
-          await getExtractsByBank(idBankSelected).then(async (fetchExtract) => {
+          const bankSelected = fetchBank.banks[selected ?? 0];
+          setBank(bankSelected);
+          await getExtractsByBank(bankSelected.id).then(async (fetchExtract) => {
             const fetchBranchOffice = await getBranchOffice();
             setTableData(fetchExtract.extracts);
             setListData(fetchBranchOffice.branchOffices);
@@ -68,11 +68,9 @@ useEffect(() => {
         >
           {tabs?.map((item, index) => (
             <Tab key={index} title={item.name}>
-              <Card
-                style={{ marginBottom: 10 }}
-              >
+              <Card style={{ marginBottom: 10 }}>
                 <CardBody>
-                  <Resume idBank={idBank}></Resume>
+                  <Resume {...bank} />
                 </CardBody>
               </Card>
               <Card>
@@ -80,7 +78,7 @@ useEffect(() => {
                   <Tabla
                     tableData={tableData}
                     listData={listData}
-                    idBank={idBank}
+                    idBank={bank.id}
                   ></Tabla>
                 </CardBody>
               </Card>

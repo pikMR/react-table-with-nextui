@@ -4,25 +4,24 @@ import { Card, CardBody } from "@nextui-org/card";
 import { useEffect, useState, useCallback } from "react";
 import { getResumesByBank } from "../../service";
 import { useGlobalState } from "../GlobalState";
-const Resume = ({ idBank }) => {
+const Resume = ({ id, openingBalance }) => {
   const [resumes, setResumes] = useState([]);
   const [total, setTotal] = useState(0);
   const { tableIsUpload } = useGlobalState();
 
   const fetchData = useCallback(async () => {
-    await getResumesByBank(idBank).then(async (fetchResume) => {
-      console.log(idBank, fetchResume);
-
-      const sumTotal = fetchResume.resumes.map((boffice) => boffice.balanceFinal)
+    await getResumesByBank(id).then(async (fetchResume) => {
+      const sumTotal = fetchResume.resumes
+        .map((boffice) => boffice.balanceFinal)
         .filter((subtotal) => subtotal > 0)
         .reduce((accumulator, currentValue) => {
           return accumulator + currentValue;
         }, 0);
-      
+
       setResumes(fetchResume.resumes);
       setTotal(sumTotal);
     });
-  }, [idBank]);
+  }, [id]);
 
   useEffect(() => {
     fetchData();
@@ -35,12 +34,15 @@ const Resume = ({ idBank }) => {
         radius="none"
         style={{
           display: "flex",
-          justifyContent: "center"
+          justifyContent: "center",
         }}
       >
         <CardBody className="result">
           <pre className="text-lg text-default-500 text-center">
-            total: ${total}
+            Saldo Inicial $ {openingBalance} | Saldo Actual $ {total}
+          </pre>
+          <pre className="text-lg text-default-500 text-center">
+            Total <text style={{ color: "#3fffa5" }}>$ {openingBalance + total}</text>
           </pre>
         </CardBody>
       </Card>
@@ -54,7 +56,7 @@ const Resume = ({ idBank }) => {
           justifyContent: "center",
           flexGrow: 4,
           gap: "10px",
-          padding: "20px"
+          padding: "20px",
         }}
       >
         {resumes?.map((item, index) => (

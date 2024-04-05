@@ -11,7 +11,7 @@ export const BranchOfficeResume = ({ branchOffice, balanceFinal }) => {
   return (
     <Card className="max-w-[400px]">
       <Tooltip content={branchOffice.name}>
-        <CardHeader className="flex gap-3">
+        <CardHeader className="flex gap-3 px-3 py-0 text-medium">
           <div
             className="flex flex-col"
             style={{ backgroundColor: branchOffice.color, color: "white" }}
@@ -22,8 +22,15 @@ export const BranchOfficeResume = ({ branchOffice, balanceFinal }) => {
         </CardHeader>
       </Tooltip>
       <Divider />
-      <CardBody>
-        <p>$ {balanceFinal}</p>
+      <CardBody
+        color="red"
+        className={
+          balanceFinal < 0
+            ? "text-lg text-warning bg-black"
+            : "text-md bg-black"
+        }
+      >
+        $ {balanceFinal}
       </CardBody>
       <Divider />
     </Card>

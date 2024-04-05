@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AddIcon } from "./icons/AddIcon";
 import { DeleteIcon } from "./icons/DeleteIcon";
 import { CheckIcon } from "./icons/CheckIcon";
@@ -31,11 +31,11 @@ const Tabla = ({ tableData, listData, idBank }) => {
     }
   }, [tableData, listData]);
 
-  const onClear = React.useCallback(() => {
+  const onClear = useCallback(() => {
     setFilterValue("");
   }, []);
 
-  const onSearchChange = React.useCallback((value) => {
+  const onSearchChange = useCallback((value) => {
     if (value) {
       setFilterValue(value);
     } else {
@@ -50,13 +50,13 @@ const Tabla = ({ tableData, listData, idBank }) => {
     {
       const updateDatos = [...datos];
       const extracto = updateDatos.find((e) => e.id === item.id);
-
       if (field === column_branchoffice) {
         // select elements
-        if (extracto[field].id !== newValue)
-        {
-          extracto[field].id = newValue;
-          console.log("💨 select value ", newValue);
+        const splitNewValue = newValue.split('_')[0];
+        if (extracto[field].id !== splitNewValue) {
+          extracto[field].id = splitNewValue;
+          extracto[field].name = list.find((x) => x.id === splitNewValue).name;
+          console.log("💨 select value ", splitNewValue);
           setDatos(updateDatos);
         }
       } else if (extracto[field] !== newValue) {
@@ -73,7 +73,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
       const nuevoExtracto = {
         date: new Date().toISOString().split("T")[0],
         name: "",
-        branchOffice: listData[0],
+        branchOffice: { ...listData[0] },
         bank: { id: idBank },
         detail: "",
         balance: 0,
@@ -128,7 +128,6 @@ const Tabla = ({ tableData, listData, idBank }) => {
               "Extracto Creado",
               "Se creó correctamente " + item.name,
             ]);
-            
             const updateDatos = [...datos];
             const extracto = updateDatos.find((e) => e.id === item.id);
             const branchOfficeSelectedName = list.find((e) => e.id === extracto.branchOffice.id).name;
@@ -277,7 +276,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
                 }
               >
                 {(sucursal) => (
-                  <SelectItem key={sucursal.id}>{sucursal.name}</SelectItem>
+                  <SelectItem key={sucursal.id + "_" +  index}>{sucursal.name}</SelectItem>
                 )}
               </Select>
             </td>

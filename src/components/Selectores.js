@@ -38,7 +38,7 @@ export const Selectores = () => {
     }
   }, [fillBank, selected]);
 
-useEffect(() => {
+  useEffect(() => {
   fetchData();
 }, [selected, fetchData]);
   
@@ -47,15 +47,17 @@ useEffect(() => {
     // eslint-disable-next-line eqeqeq, no-mixed-operators
     if (selected === null && newSelected == 0 && listData?.length !== 0) {
       // render first reload page when all data is loaded.
+      setBank(tabs[newSelected]);
       setSelected(newSelected);
     // eslint-disable-next-line eqeqeq, no-mixed-operators
     } else if (selected !== null && newSelected != selected) {
       // render when selected tab
+      setBank(tabs[newSelected]);
       setTableData([]);
       setFillBank(false);
       setSelected(newSelected);
     }
-  }, [listData, selected]);
+  }, [listData?.length, selected, tabs]);
 
   return (
     <>

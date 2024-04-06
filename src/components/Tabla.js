@@ -46,7 +46,6 @@ const Tabla = ({ tableData, listData, idBank }) => {
 
   const handleSelectedDate = (event) =>
   {
-    debugger;
     if (event.target) {
       setFilterDate(event.target.value);
     } else {

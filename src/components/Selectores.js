@@ -7,57 +7,63 @@ import { Skeleton } from "@nextui-org/skeleton";
 import { getBanks, getExtractsByBank, getBranchOffice } from "../service";
 
 export const Selectores = () => {
-  const [fillBank, setFillBank] = useState(false);
+  // const [fillBank, setFillBank] = useState(false);
   const [tabs, setTabs] = useState([]);
-  const [bank, setBank] = useState(null);
+  const [bank, setBank] = useState({
+    id: "",
+    name: "",
+    openingBalance: 0,
+  });
   const [tableData, setTableData] = useState([]);
   const [listData, setListData] = useState([]);
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState("0");
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const fetchData = useCallback(async () => {
+  const fetchBanks = useCallback(async () => {
     try {
-      setIsLoaded(false);
-      if (!fillBank) {
-        setFillBank(true);
+      if (bank.id === "") {
         await getBanks().then(async (fetchBank) => {
           setTabs(fetchBank.banks);
           const bankSelected = fetchBank.banks[selected ?? 0];
           setBank(bankSelected);
-          await getExtractsByBank(bankSelected.id).then(async (fetchExtract) => {
-            const fetchBranchOffice = await getBranchOffice();
-            setTableData(fetchExtract.extracts);
-            setListData(fetchBranchOffice.branchOffices);
-          });
         });
+      } else if (tabs.banks) {
+        const bankSelected = tabs.banks[selected ?? 0];
+        setBank(bankSelected);
       }
     } catch (error) {
-      console.log("🐗 ~ fetchData ~ error:", error);
+      console.log("🐗 ~ fetchBanks ~ error:", error);
+    }
+  }, [bank.id, selected, tabs.banks]);
+
+  const fetchExtracts = useCallback(async () => {
+    try {
+      setIsLoaded(false);
+      if (bank.id !== "") {
+        await getExtractsByBank(bank.id).then(async (fetchExtract) => {
+          const fetchBranchOffice = await getBranchOffice();
+          setTableData(fetchExtract.extracts);
+          setListData(fetchBranchOffice.branchOffices);
+        });  
+      }
+    } catch (error) {
+      console.log("🐗 ~ fetchExtracts ~ error:", error);
     } finally {
       setIsLoaded(true);
     }
-  }, [fillBank, selected]);
+  }, [bank.id]);
 
   useEffect(() => {
-  fetchData();
-}, [selected, fetchData]);
+    fetchBanks();
+    fetchExtracts();
+  }, [selected, fetchBanks, fetchExtracts]);
   
-  const handleTabChange = useCallback((newSelected) => {
-    setIsLoaded(false);
-    // eslint-disable-next-line eqeqeq, no-mixed-operators
-    if (selected === null && newSelected == 0 && listData?.length !== 0) {
-      // render first reload page when all data is loaded.
-      setBank(tabs[newSelected]);
-      setSelected(newSelected);
-    // eslint-disable-next-line eqeqeq, no-mixed-operators
-    } else if (selected !== null && newSelected != selected) {
-      // render when selected tab
-      setBank(tabs[newSelected]);
-      setTableData([]);
-      setFillBank(false);
-      setSelected(newSelected);
-    }
-  }, [listData?.length, selected, tabs]);
+  const handleTabChange = (newSelected) => {
+    setTableData([]);
+    let nselected = Number(newSelected);
+    setBank(tabs[nselected]);
+    setSelected(newSelected);
+  };
 
   return (
     <>

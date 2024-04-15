@@ -22,11 +22,14 @@ export const Selectores = () => {
   const fetchBanks = useCallback(async () => {
     try {
       if (bank.id === "") {
-        await getBanks().then(async (fetchBank) => {
-          setTabs(fetchBank.banks);
-          const bankSelected = fetchBank.banks[selected ?? 0];
-          setBank(bankSelected);
+        await getBranchOffice().then(async (fetchBranchOffice) => {
+          setListData(fetchBranchOffice.branchOffices);
         });
+        const { banks } = await getBanks();
+        setTabs(banks);
+        const bankSelected = banks[selected ?? 0];
+        setBank(bankSelected);
+        
       } else if (tabs.banks) {
         const bankSelected = tabs.banks[selected ?? 0];
         setBank(bankSelected);
@@ -41,9 +44,7 @@ export const Selectores = () => {
       setIsLoaded(false);
       if (bank.id !== "") {
         await getExtractsByBank(bank.id).then(async (fetchExtract) => {
-          const fetchBranchOffice = await getBranchOffice();
           setTableData(fetchExtract.extracts);
-          setListData(fetchBranchOffice.branchOffices);
         });  
       }
     } catch (error) {

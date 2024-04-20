@@ -6,7 +6,9 @@ const GlobalStateContext = createContext();
 export const GlobalStateProvider = ({ children }) => {
   const [tableUploaded, setTableUploaded] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [backdrop, setBackdrop] = useState(["opaque","tittle","message"]);
+  const [backdrop, setBackdrop] = useState(["opaque", "tittle", "message"]);
+  const [login, setLogin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const openModal = (backdrop) =>
   {
@@ -27,8 +29,27 @@ export const GlobalStateProvider = ({ children }) => {
     setTableUploaded(false);
   };
 
+  const loginUser = (request) => {
+    const { admin, valid } = request;
+    setLogin(valid);
+    setIsAdmin(admin);
+  };
+
   return (
-    <GlobalStateContext.Provider value={{ modalOpen, backdrop, tableUploaded, openModal, closeModal, tableIsUpload, tableWaitingUpload }}>
+    <GlobalStateContext.Provider
+      value={{
+        modalOpen,
+        backdrop,
+        tableUploaded,
+        login,
+        isAdmin,
+        openModal,
+        closeModal,
+        tableIsUpload,
+        tableWaitingUpload,
+        loginUser,
+      }}
+    >
       {children}
     </GlobalStateContext.Provider>
   );

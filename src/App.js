@@ -2,9 +2,9 @@ import * as React from "react";
 import { NextUIProvider } from "@nextui-org/system";
 import { Selectores } from "./components/Selectores";
 import './App.css';
-import { Button } from "@nextui-org/button";
 import { GlobalStateProvider } from "./components/GlobalState"; 
 import { ModalCreate } from "./components/Modals/Create";
+import { ModalLogin } from "./components/Modals/Login";
 import "./index.css";
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button>Login</Button>
+              <ModalLogin />
             </a>
             <div className="flex w-full flex-col">
               <Selectores />

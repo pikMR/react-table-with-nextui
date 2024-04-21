@@ -27,13 +27,18 @@ export const ModalLogin = () => {
   };
 
   return (
-    <Modal backdrop="blur" isOpen={!login} onClose={loginUser} hideCloseButton={true}>
+    <Modal
+      backdrop="blur"
+      isOpen={!login}
+      onClose={loginUser}
+      hideCloseButton={true}
+    >
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">Login</ModalHeader>
         <ModalBody>
           <Input
-            type="text"
-            label="Usuario"
+            type="email"
+            label="Email"
             defaultValue=""
             className="max-w-xs"
             ref={email}

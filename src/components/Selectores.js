@@ -4,10 +4,11 @@ import { useEffect, useState, useCallback } from "react";
 import { Tabs, Tab } from "@nextui-org/tabs";
 import { Card, CardBody } from "@nextui-org/card";
 import { Skeleton } from "@nextui-org/skeleton";
+import { useGlobalState } from "./GlobalState";
 import { getBanks, getExtractsByBank, getBranchOffice } from "../service";
 
 export const Selectores = () => {
-  // const [fillBank, setFillBank] = useState(false);
+  const { login } = useGlobalState();
   const [tabs, setTabs] = useState([]);
   const [bank, setBank] = useState({
     id: "",
@@ -55,9 +56,11 @@ export const Selectores = () => {
   }, [bank.id]);
 
   useEffect(() => {
-    fetchBanks();
-    fetchExtracts();
-  }, [selected, fetchBanks, fetchExtracts]);
+    if (login) {
+      fetchBanks();
+      fetchExtracts();
+    }
+  }, [selected, fetchBanks, fetchExtracts, login]);
   
   const handleTabChange = (newSelected) => {
     setTableData([]);

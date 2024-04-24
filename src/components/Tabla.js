@@ -17,7 +17,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
   const column_detail = "detail";
   const column_balance = "balance"; 
   const column_branchoffice = "branchOffice";
-  const { openModal, tableIsUpload } = useGlobalState(); // Utilizamos el estado global
+  const { openModal, tableIsUpload, token } = useGlobalState(); // Utilizamos el estado global
   const [filterValue, setFilterValue] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [editModes, setEditModes] = useState({});
@@ -125,13 +125,13 @@ const Tabla = ({ tableData, listData, idBank }) => {
   const handleValidateClick = async (item) => {
     try {
       if (!item.id) {
-        await postExtract(item).then(async (result) => {
+        await postExtract(token, item).then(async (result) => {
           if (result.status) {
             openModal([
               "blur",
               "Error en la creación del extracto.",
               "No se creó correctamente " + item.name,
-            ]); 
+            ]);
           } else {
             openModal([
               "opaque",
@@ -140,7 +140,9 @@ const Tabla = ({ tableData, listData, idBank }) => {
             ]);
             const updateDatos = [...datos];
             const extracto = updateDatos.find((e) => e.id === item.id);
-            const branchOfficeSelectedName = list.find((e) => e.id === extracto.branchOffice.id).name;
+            const branchOfficeSelectedName = list.find(
+              (e) => e.id === extracto.branchOffice.id
+            ).name;
             extracto.id = result;
             extracto.branchOffice.name = branchOfficeSelectedName;
             setCreateDisabled(false);
@@ -149,7 +151,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
           }
         });        
       } else {
-        await putExtract(item).then(async (result) => {
+        await putExtract(token, item).then(async (result) => {
           if (result.status) {
             openModal([
               "blur",
@@ -188,7 +190,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
         setDatos(updateDatos.filter((e) => e.id !== item.id));  
         setCreateDisabled(false);
       } else {
-        await deleteExtract(item.id).then(async (result) => {
+        await deleteExtract(token, item.id).then(async (result) => {
           if (result.status) {
             openModal([
               "blur",

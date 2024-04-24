@@ -8,6 +8,7 @@ export const GlobalStateProvider = ({ children }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [backdrop, setBackdrop] = useState(["opaque", "tittle", "message"]);
   const [login, setLogin] = useState(false);
+  const [token, setToken] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
   const openModal = (backdrop) =>
@@ -30,7 +31,8 @@ export const GlobalStateProvider = ({ children }) => {
   };
 
   const loginUser = (request) => {
-    const { admin, valid } = request;
+    const { admin, valid, token } = request;
+    setToken(token);
     setLogin(valid);
     setIsAdmin(admin);
   };
@@ -42,6 +44,7 @@ export const GlobalStateProvider = ({ children }) => {
         backdrop,
         tableUploaded,
         login,
+        token,
         isAdmin,
         openModal,
         closeModal,

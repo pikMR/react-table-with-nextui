@@ -11,6 +11,7 @@ import { useGlobalState } from "./../GlobalState";
 import { EyeFilledIcon } from "../icons/EyeFilledIcon";
 import { EyeSlashFilledIcon } from "../icons/EyeSlashFilledIcon";
 import { Input } from "@nextui-org/input";
+import { postLogin } from "../../service";
 
 export const ModalLogin = () => {
   const email = useRef(null);
@@ -19,10 +20,15 @@ export const ModalLogin = () => {
   const [ pwVisible, setPwVisible] = useState(false);
 
   const toggleVisibility = () => setPwVisible(!pwVisible);
-  const fetchLogin = () => {
-    console.log('email', email.current.value);
-    console.log("password", password.current.value);
-    const userlogin = { admin: true, valid: true };
+  const fetchLogin = async () => {
+    const member = {
+      email: email.current.value,
+      password: password.current.value,
+    };
+
+    debugger;
+    const token = await postLogin(member);
+    const userlogin = { admin: true, valid: true, token };
     loginUser(userlogin);
   };
 

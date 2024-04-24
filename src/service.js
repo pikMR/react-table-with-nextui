@@ -3,18 +3,18 @@ const baseurl = "https://localhost:44377";
 export const getBanks = async () => {
   const url = `/Bank`;
   try {
-      console.log(`🦅 ~ service.js ~ getBanks ~ ${url}`);  
-      const response = await fetch(baseurl + url);
-      return await response.json();
-    } catch {
-        throw new Error('error al obtener los bancos.')
-    }
-}
+    console.log(`🦅 ~ service.js ~ getBanks ~ ${url}`);
+    const response = await fetch(baseurl + url);
+    return await response.json();
+  } catch {
+    throw new Error("error al obtener los bancos.");
+  }
+};
 
 export const getBranchOffice = async () => {
   const url = `/BranchOffice`;
   try {
-    console.log(`🦅 ~ service.js ~ getBranchOffice ~ ${url}`);  
+    console.log(`🦅 ~ service.js ~ getBranchOffice ~ ${url}`);
     const response = await fetch(baseurl + url);
     return await response.json();
   } catch {
@@ -25,7 +25,7 @@ export const getBranchOffice = async () => {
 export const getExtractsByBank = async (idbank) => {
   const url = `/Extract/Bank/${idbank}`;
   try {
-    console.log(`🦅 ~ service.js ~ getExtractsByBank ~ ${url}`);  
+    console.log(`🦅 ~ service.js ~ getExtractsByBank ~ ${url}`);
     const response = await fetch(baseurl + url);
     return await response.json();
   } catch {
@@ -48,7 +48,9 @@ export const putExtract = async (extract) => {
       return await response.text();
     }
   } catch {
-    throw new Error(`error al obtener los extractos, ${url} | id: ${extract.id}`);
+    throw new Error(
+      `error al obtener los extractos, ${url} | id: ${extract.id}`
+    );
   }
 };
 
@@ -67,7 +69,9 @@ export const postExtract = async (extract) => {
       return await response.text();
     }
   } catch {
-    throw new Error(`Error al obtener los extractos, ${url} | id: ${extract.id}`);
+    throw new Error(
+      `Error al obtener los extractos, ${url} | id: ${extract.id}`
+    );
   }
 };
 
@@ -85,7 +89,10 @@ export const deleteExtract = async (idExtract) => {
   }
 };
 
-export const getResumesByBankAndBranchOffice = async (idbank, idBranchOffice) => {
+export const getResumesByBankAndBranchOffice = async (
+  idbank,
+  idBranchOffice
+) => {
   const url = `/Resume/Bank/${idbank}/BranchOffice/${idBranchOffice}`;
   try {
     console.log(`🦅 ~ service.js ~ ${url}`);
@@ -115,3 +122,26 @@ export const getResumesByBank = async (idbank) => {
   }
 };
 
+export const postLogin = async (member) => {
+  const url = `/Member/Login`;
+  try {
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(member),
+    };
+    const response = await fetch(baseurl + url, requestOptions);
+    if (!response.ok) {
+      return response;
+    } else {
+      return await response.text();
+    }
+  } catch {
+    throw new Error(
+      `Error al obtener el token, ${url} | email: ${member.email} , password: ${member.password}`
+    );
+  }
+};

@@ -8,7 +8,7 @@ import { useGlobalState } from "./GlobalState";
 import { getBanks, getExtractsByBank, getBranchOffice } from "../service";
 
 export const Selectores = () => {
-  const { login } = useGlobalState();
+  const { login, token } = useGlobalState();
   const [tabs, setTabs] = useState([]);
   const [bank, setBank] = useState({
     id: "",
@@ -23,10 +23,10 @@ export const Selectores = () => {
   const fetchBanks = useCallback(async () => {
     try {
       if (bank.id === "") {
-        await getBranchOffice().then(async (fetchBranchOffice) => {
+        await getBranchOffice(token).then(async (fetchBranchOffice) => {
           setListData(fetchBranchOffice.branchOffices);
         });
-        const { banks } = await getBanks();
+        const { banks } = await getBanks(token);
         setTabs(banks);
         const bankSelected = banks[selected ?? 0];
         setBank(bankSelected);
@@ -38,13 +38,13 @@ export const Selectores = () => {
     } catch (error) {
       console.log("🐗 ~ fetchBanks ~ error:", error);
     }
-  }, [bank.id, selected, tabs.banks]);
+  }, [bank.id, selected, tabs.banks, token]);
 
   const fetchExtracts = useCallback(async () => {
     try {
       setIsLoaded(false);
       if (bank.id !== "") {
-        await getExtractsByBank(bank.id).then(async (fetchExtract) => {
+        await getExtractsByBank(token, bank.id).then(async (fetchExtract) => {
           setTableData(fetchExtract.extracts);
         });  
       }

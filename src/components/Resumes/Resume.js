@@ -4,13 +4,14 @@ import { Card, CardBody } from "@nextui-org/card";
 import { useEffect, useState, useCallback } from "react";
 import { getResumesByBank } from "../../service";
 import { useGlobalState } from "../GlobalState";
+
 const Resume = ({ id, openingBalance }) => {
   const [resumes, setResumes] = useState([]);
   const [total, setTotal] = useState(0);
-  const { tableIsUpload } = useGlobalState();
+  const { tableIsUpload, token } = useGlobalState();
 
   const fetchData = useCallback(async () => {
-    await getResumesByBank(id).then(async (fetchResume) => {
+    await getResumesByBank(token, id).then(async (fetchResume) => {
       const sumTotal = fetchResume.resumes
         .map((boffice) => boffice.balanceFinal)
         .filter((subtotal) => subtotal > 0)

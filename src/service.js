@@ -1,44 +1,56 @@
 const baseurl = "https://localhost:44377";
 
-export const getBanks = async () => {
+export const getBanks = async (token) => {
   const url = `/Bank`;
   try {
     console.log(`🦅 ~ service.js ~ getBanks ~ ${url}`);
-    const response = await fetch(baseurl + url);
+    const response = await fetch(baseurl + url, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
     return await response.json();
   } catch {
     throw new Error("error al obtener los bancos.");
   }
 };
 
-export const getBranchOffice = async () => {
+export const getBranchOffice = async (token) => {
   const url = `/BranchOffice`;
   try {
     console.log(`🦅 ~ service.js ~ getBranchOffice ~ ${url}`);
-    const response = await fetch(baseurl + url);
+    const response = await fetch(baseurl + url, {
+      headers: {
+        "Authorization": "Bearer " + token
+      },
+    });
     return await response.json();
   } catch {
     throw new Error(`error al obtener las sucursales, ${url}`);
   }
 };
 
-export const getExtractsByBank = async (idbank) => {
+export const getExtractsByBank = async (token, idbank) => {
   const url = `/Extract/Bank/${idbank}`;
   try {
     console.log(`🦅 ~ service.js ~ getExtractsByBank ~ ${url}`);
-    const response = await fetch(baseurl + url);
+    const response = await fetch(baseurl + url, {
+      headers: {
+        "Authorization": "Bearer " + token,
+      },
+    });
     return await response.json();
   } catch {
     throw new Error(`error al obtener los extractos con el banco ${idbank}`);
   }
 };
 
-export const putExtract = async (extract) => {
+export const putExtract = async (token, extract) => {
   const url = `/Extract`;
   try {
     const requestOptions = {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
       body: JSON.stringify(extract),
     };
     const response = await fetch(baseurl + url, requestOptions);
@@ -54,12 +66,12 @@ export const putExtract = async (extract) => {
   }
 };
 
-export const postExtract = async (extract) => {
+export const postExtract = async (token, extract) => {
   const url = `/Extract`;
   try {
     const requestOptions = {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
       body: JSON.stringify(extract),
     };
     const response = await fetch(baseurl + url, requestOptions);
@@ -75,10 +87,13 @@ export const postExtract = async (extract) => {
   }
 };
 
-export const deleteExtract = async (idExtract) => {
+export const deleteExtract = async (token, idExtract) => {
   const url = `/Extract/${idExtract}`;
   try {
-    const response = await fetch(baseurl + url, { method: "DELETE" });
+    const response = await fetch(baseurl + url, {
+      method: "DELETE",
+      headers: { "Authorization": "Bearer " + token },
+    });
     if (!response.ok) {
       return response;
     } else {
@@ -90,13 +105,18 @@ export const deleteExtract = async (idExtract) => {
 };
 
 export const getResumesByBankAndBranchOffice = async (
+  token,
   idbank,
   idBranchOffice
 ) => {
   const url = `/Resume/Bank/${idbank}/BranchOffice/${idBranchOffice}`;
   try {
     console.log(`🦅 ~ service.js ~ ${url}`);
-    const response = await fetch(baseurl + url);
+    const response = await fetch(baseurl + url, {
+      headers: {
+        "Authorization": "Bearer " + token,
+      },
+    });
     if (!response.ok) {
       return response;
     } else {
@@ -107,11 +127,15 @@ export const getResumesByBankAndBranchOffice = async (
   }
 };
 
-export const getResumesByBank = async (idbank) => {
+export const getResumesByBank = async (token, idbank) => {
   const url = `/Resume/Bank/${idbank}`;
   try {
     console.log(`🦅 ~ service.js ~ ${url}`);
-    const response = await fetch(baseurl + url);
+    const response = await fetch(baseurl + url, {
+      headers: {
+        "Authorization": "Bearer " + token,
+      },
+    });
     if (!response.ok) {
       return response;
     } else {
@@ -128,7 +152,7 @@ export const postLogin = async (member) => {
     const requestOptions = {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
 
       body: JSON.stringify(member),
@@ -137,7 +161,7 @@ export const postLogin = async (member) => {
     if (!response.ok) {
       return response;
     } else {
-      return await response.text();
+      return await response.json();
     }
   } catch {
     throw new Error(

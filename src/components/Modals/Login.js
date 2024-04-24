@@ -16,7 +16,7 @@ import { postLogin } from "../../service";
 export const ModalLogin = () => {
   const email = useRef(null);
   const password = useRef(null);
-  const { login, isAdmin, loginUser } = useGlobalState();
+  const { login, loginUser } = useGlobalState(); // TODO isAdmin
   const [ pwVisible, setPwVisible] = useState(false);
 
   const toggleVisibility = () => setPwVisible(!pwVisible);
@@ -26,10 +26,11 @@ export const ModalLogin = () => {
       password: password.current.value,
     };
 
-    debugger;
-    const token = await postLogin(member);
-    const userlogin = { admin: true, valid: true, token };
-    loginUser(userlogin);
+    const { value, isOk } = await postLogin(member);
+    if (isOk) {
+      const userlogin = { admin: true, valid: isOk, token: value };
+      loginUser(userlogin);
+    }
   };
 
   return (

@@ -169,3 +169,22 @@ export const postLogin = async (member) => {
     );
   }
 };
+
+export const getInfoLogin = async (token) => {
+  const url = `/Member/GetInfo`;
+  try {
+    console.log(`🦅 ~ service.js ~ getInfoLogin ~ ${url}`);
+    const response = await fetch(baseurl + url, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    if (!response.ok) {
+      return response;
+    } else {
+      return await response.json();
+    }
+  } catch {
+    throw new Error("error al obtener el usuario: " + token);
+  }
+};

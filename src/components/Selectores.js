@@ -53,7 +53,7 @@ export const Selectores = () => {
     } finally {
       setIsLoaded(true);
     }
-  }, [bank.id]);
+  }, [bank.id, token]);
 
   useEffect(() => {
     if (login) {

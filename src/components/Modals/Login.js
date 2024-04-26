@@ -11,12 +11,12 @@ import { useGlobalState } from "./../GlobalState";
 import { EyeFilledIcon } from "../icons/EyeFilledIcon";
 import { EyeSlashFilledIcon } from "../icons/EyeSlashFilledIcon";
 import { Input } from "@nextui-org/input";
-import { postLogin } from "../../service";
+import { postLogin, getInfoLogin } from "../../service";
 
 export const ModalLogin = () => {
   const email = useRef(null);
   const password = useRef(null);
-  const { login, loginUser } = useGlobalState(); // TODO isAdmin
+  const { login, loginUser } = useGlobalState();
   const [ pwVisible, setPwVisible] = useState(false);
 
   const toggleVisibility = () => setPwVisible(!pwVisible);
@@ -25,11 +25,16 @@ export const ModalLogin = () => {
       email: email.current.value,
       password: password.current.value,
     };
-
     const { value, isOk } = await postLogin(member);
     if (isOk) {
-      const userlogin = { admin: true, valid: isOk, token: value };
-      loginUser(userlogin);
+      var responseProfile = await getInfoLogin(value);
+      debugger;
+        const userlogin = {
+          admin: responseProfile.role === "Admin",
+          valid: isOk,
+          token: value,
+        };
+        loginUser(userlogin);
     }
   };
 

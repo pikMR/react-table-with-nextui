@@ -17,7 +17,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
   const column_detail = "detail";
   const column_balance = "balance"; 
   const column_branchoffice = "branchOffice";
-  const { openModal, tableIsUpload, token } = useGlobalState(); // Utilizamos el estado global
+  const { openModal, tableIsUpload, token, isAdmin } = useGlobalState(); // Utilizamos el estado global
   const [filterValue, setFilterValue] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [editModes, setEditModes] = useState({});
@@ -246,7 +246,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
 
   return (
     <>
-      {topContent}
+      {isAdmin && topContent}
       <table>
         <thead>
           <tr>
@@ -262,7 +262,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
             <th>Sucursal</th>
             <th>Detalle</th>
             <th>Saldo</th>
-            <th>ACCIONES</th>
+            {isAdmin && <th>ACCIONES</th>}
           </tr>
         </thead>
         <tbody>
@@ -338,34 +338,36 @@ const Tabla = ({ tableData, listData, idBank }) => {
                   }
                 />
               </td>
-              <td>
-                <div className="relative flex items-center gap-2">
-                  <Tooltip content="Editar Extracto">
-                    <span
-                      className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                      onClick={() => handleEditClick(index + 1)}
-                    >
-                      <EditIcon />
-                    </span>
-                  </Tooltip>
-                  <Tooltip color="danger" content="Eliminar Extracto">
-                    <span
-                      className="text-lg text-danger cursor-pointer active:opacity-50"
-                      onClick={() => handleDeleteClick(item)}
-                    >
-                      <DeleteIcon />
-                    </span>
-                  </Tooltip>
-                  <Tooltip color="success" content="Actualizar Extracto">
-                    <span
-                      className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
-                      onClick={() => handleValidateClick(item)}
-                    >
-                      <CheckIcon />
-                    </span>
-                  </Tooltip>
-                </div>
-              </td>
+              {isAdmin && (
+                <td>
+                  <div className="relative flex items-center gap-2">
+                    <Tooltip content="Editar Extracto">
+                      <span
+                        className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                        onClick={() => handleEditClick(index + 1)}
+                      >
+                        <EditIcon />
+                      </span>
+                    </Tooltip>
+                    <Tooltip color="danger" content="Eliminar Extracto">
+                      <span
+                        className="text-lg text-danger cursor-pointer active:opacity-50"
+                        onClick={() => handleDeleteClick(item)}
+                      >
+                        <DeleteIcon />
+                      </span>
+                    </Tooltip>
+                    <Tooltip color="success" content="Actualizar Extracto">
+                      <span
+                        className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
+                        onClick={() => handleValidateClick(item)}
+                      >
+                        <CheckIcon />
+                      </span>
+                    </Tooltip>
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

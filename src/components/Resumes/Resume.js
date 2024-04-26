@@ -22,7 +22,7 @@ const Resume = ({ id, openingBalance }) => {
       setResumes(fetchResume.resumes);
       setTotal(sumTotal);
     });
-  }, [id]);
+  }, [id, token]);
 
   useEffect(() => {
     fetchData();

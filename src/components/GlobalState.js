@@ -31,10 +31,12 @@ export const GlobalStateProvider = ({ children }) => {
   };
 
   const loginUser = (request) => {
-    const { admin, valid, token } = request;
-    setToken(token);
-    setLogin(valid);
-    setIsAdmin(admin);
+    if (request) {
+      const { admin, valid, token } = request;
+      setToken(token);
+      setLogin(valid);
+      setIsAdmin(admin);
+    }
   };
 
   return (

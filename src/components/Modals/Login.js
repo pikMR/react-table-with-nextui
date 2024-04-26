@@ -28,7 +28,6 @@ export const ModalLogin = () => {
     const { value, isOk } = await postLogin(member);
     if (isOk) {
       var responseProfile = await getInfoLogin(value);
-      debugger;
         const userlogin = {
           admin: responseProfile.role === "Admin",
           valid: isOk,

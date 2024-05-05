@@ -53,31 +53,6 @@ const Tabla = ({ tableData, listData, idBank }) => {
     }
   }
 
-  const handleSelectField = (event, item, field) => {
-    console.log("🚀 handleSelectField", event, item, field);
-    const newValue = event.target.value;
-    if (newValue)
-    {
-      const updateDatos = [...datos];
-      const extracto = updateDatos.find((e) => e.id === item.id);
-      if (field === column_branchoffice) {
-        // select elements
-        const splitNewValue = newValue.split('_')[0];
-        if (extracto[field].id !== splitNewValue) {
-          extracto[field].id = splitNewValue;
-          extracto[field].name = list.find((x) => x.id === splitNewValue).name;
-          console.log("💨 select value ", splitNewValue);
-          setDatos(updateDatos);
-        }
-      } else if (extracto[field] !== newValue) {
-        // input elements
-        extracto[field] = newValue;
-        console.log("💨 input value ", extracto[field], newValue);
-        setDatos(updateDatos);
-      }
-    }
-  };
-
   const topContent = useMemo(() => {
     const handleNewExtracto = () => {
       const nuevoExtracto = {
@@ -122,104 +97,8 @@ const Tabla = ({ tableData, listData, idBank }) => {
     }));
   };
 
-  const handleValidateClick = async (item) => {
-    try {
-      if (!item.id) {
-        await postExtract(token, item).then(async (result) => {
-          if (result.status) {
-            openModal([
-              "blur",
-              "Error en la creación del extracto.",
-              "No se creó correctamente " + item.name,
-            ]);
-          } else {
-            openModal([
-              "opaque",
-              "Extracto Creado",
-              "Se creó correctamente " + item.name,
-            ]);
-            const updateDatos = [...datos];
-            const extracto = updateDatos.find((e) => e.id === item.id);
-            const branchOfficeSelectedName = list.find(
-              (e) => e.id === extracto.branchOffice.id
-            ).name;
-            extracto.id = result;
-            extracto.branchOffice.name = branchOfficeSelectedName;
-            setCreateDisabled(false);
-            setDatos(updateDatos);
-            tableIsUpload();
-          }
-        });        
-      } else {
-        await putExtract(token, item).then(async (result) => {
-          if (result.status) {
-            openModal([
-              "blur",
-              "Error en la actualización del extracto.",
-              "No se actualizó correctamente " + item.name,
-            ]);  
-          } else {
-            openModal([
-              "opaque",
-              "Extracto Actualizado",
-              "Se actualizó correctamente " + item.name,
-            ]);
-            tableIsUpload();
-          }
-        });
-      }
-
-    } catch (err) {
-      openModal([
-        "blur",
-        "Error no esperado",
-        "Operación no aceptada " + item.name,
-      ]); 
-    }
-  };
-
-  const handleDeleteClick = async (item) => {
-    try {
-      if (!item.id) {
-        openModal([
-          "opaque",
-          "Extracto Eliminado.",
-          "Se eliminó correctamente " + item.name,
-        ]);
-        const updateDatos = [...datos];
-        setDatos(updateDatos.filter((e) => e.id !== item.id));  
-        setCreateDisabled(false);
-      } else {
-        await deleteExtract(token, item.id).then(async (result) => {
-          if (result.status) {
-            openModal([
-              "blur",
-              "Error en la eliminación del extracto.",
-              "No se eliminó correctamente " + item.name,
-            ]);
-          } else {
-            openModal([
-              "opaque",
-              "Extracto Eliminado.",
-              "Se eliminó correctamente " + item.name,
-            ]);
-            const updateDatos = [...datos];
-            setDatos(updateDatos.filter((e) => e.id !== item.id));
-            setCreateDisabled(false);
-            tableIsUpload();
-          }
-        });
-      }
-    } catch (err) {
-      openModal([
-        "blur",
-        "Error no esperado",
-        "Operación no aceptada " + item.name,
-      ]);
-    }
-  };
-
   const filteredItems = useMemo(() => {
+    console.log("filteredItems");
     let filteredExtracts = [...datos];
 
     if (filterDate.length > 0) {
@@ -243,7 +122,231 @@ const Tabla = ({ tableData, listData, idBank }) => {
 
     return filteredExtracts;
   }, [datos, filterValue, filterDate]);
+ 
+  const Extracts = useMemo(() => {
+    const handleSelectField = (event, item, field) => {
+      console.log("🚀 handleSelectField", event, item, field);
+      const newValue = event.target.value;
+      if (newValue) {
+        const updateDatos = [...datos];
+        const extracto = updateDatos.find((e) => e.id === item.id);
+        if (field === column_branchoffice) {
+          // select elements
+          const splitNewValue = newValue.split("_")[0];
+          if (extracto[field].id !== splitNewValue) {
+            extracto[field].id = splitNewValue;
+            extracto[field].name = list.find(
+              (x) => x.id === splitNewValue
+            ).name;
+            console.log("💨 select value ", splitNewValue);
+            setDatos(updateDatos);
+          }
+        } else if (extracto[field] !== newValue) {
+          // input elements
+          extracto[field] = newValue;
+          console.log("💨 input value ", extracto[field], newValue);
+          setDatos(updateDatos);
+        }
+      }
+    };
+    
+    const handleValidateClick = async (item) => {
+      try {
+        if (!item.id) {
+          await postExtract(token, item).then(async (result) => {
+            if (result.status) {
+              openModal([
+                "blur",
+                "Error en la creación del extracto.",
+                "No se creó correctamente " + item.name,
+              ]);
+            } else {
+              openModal([
+                "opaque",
+                "Extracto Creado",
+                "Se creó correctamente " + item.name,
+              ]);
+              const updateDatos = [...datos];
+              const extracto = updateDatos.find((e) => e.id === item.id);
+              const branchOfficeSelectedName = list.find(
+                (e) => e.id === extracto.branchOffice.id
+              ).name;
+              extracto.id = result;
+              extracto.branchOffice.name = branchOfficeSelectedName;
+              setCreateDisabled(false);
+              setDatos(updateDatos);
+              tableIsUpload();
+            }
+          });
+        } else {
+          await putExtract(token, item).then(async (result) => {
+            if (result.status) {
+              openModal([
+                "blur",
+                "Error en la actualización del extracto.",
+                "No se actualizó correctamente " + item.name,
+              ]);
+            } else {
+              openModal([
+                "opaque",
+                "Extracto Actualizado",
+                "Se actualizó correctamente " + item.name,
+              ]);
+              tableIsUpload();
+            }
+          });
+        }
+      } catch (err) {
+        openModal([
+          "blur",
+          "Error no esperado",
+          "Operación no aceptada " + item.name,
+        ]);
+      }
+    };
 
+    const handleDeleteClick = async (item) => {
+      try {
+        if (!item.id) {
+          openModal([
+            "opaque",
+            "Extracto Eliminado.",
+            "Se eliminó correctamente " + item.name,
+          ]);
+          const updateDatos = [...datos];
+          setDatos(updateDatos.filter((e) => e.id !== item.id));
+          setCreateDisabled(false);
+        } else {
+          await deleteExtract(token, item.id).then(async (result) => {
+            if (result.status) {
+              openModal([
+                "blur",
+                "Error en la eliminación del extracto.",
+                "No se eliminó correctamente " + item.name,
+              ]);
+            } else {
+              openModal([
+                "opaque",
+                "Extracto Eliminado.",
+                "Se eliminó correctamente " + item.name,
+              ]);
+              const updateDatos = [...datos];
+              setDatos(updateDatos.filter((e) => e.id !== item.id));
+              setCreateDisabled(false);
+              tableIsUpload();
+            }
+          });
+        }
+      } catch (err) {
+        openModal([
+          "blur",
+          "Error no esperado",
+          "Operación no aceptada " + item.name,
+        ]);
+      }
+    };
+
+    return filteredItems.map((item, index) => (
+      <tr key={item.id + "_" + index + 1}>
+        <td>
+          <Input
+            isReadOnly={!editModes[index + 1]}
+            type="date"
+            variant="bordered"
+            defaultValue={item.date}
+            className="max-w-xs"
+            onBlur={(event) => handleSelectField(event, item, column_date)}
+          />
+        </td>
+        <td>
+          <Input
+            isReadOnly={!editModes[index + 1]}
+            type="text"
+            variant="bordered"
+            defaultValue={item.name}
+            className="max-w-xs"
+            onBlur={(event) =>
+              handleSelectField(event, item, column_description)
+            }
+          />
+        </td>
+        <td>
+          <Select
+            aria-labelledby={list.map((objeto) => objeto.name).join(",")}
+            variant="bordered"
+            items={list}
+            placeholder={item.branchOffice.name}
+            onChange={(event) =>
+              handleSelectField(event, item, column_branchoffice)
+            }
+          >
+            {(sucursal) => (
+              <SelectItem key={sucursal.id + "_" + index}>
+                {sucursal.name}
+              </SelectItem>
+            )}
+          </Select>
+        </td>
+        <td>
+          <Input
+            isReadOnly={!editModes[index + 1]}
+            type="text"
+            variant="bordered"
+            defaultValue={item.detail}
+            className="max-w-xs"
+            onBlur={(event) => handleSelectField(event, item, column_detail)}
+          />
+        </td>
+        <td>
+          <Input
+            isReadOnly={!editModes[index + 1]}
+            type="number"
+            variant="bordered"
+            defaultValue={item.balance}
+            className="max-w-xs"
+            startContent={
+              <div className="pointer-events-none flex items-center">
+                <span className="text-default-400 text-small">$</span>
+              </div>
+            }
+            onBlur={(event) => handleSelectField(event, item, column_balance)}
+          />
+        </td>
+        {isAdmin && (
+          <td>
+            <div className="relative flex items-center gap-2">
+              <Tooltip content="Editar Extracto">
+                <span
+                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                  onClick={() => handleEditClick(index + 1)}
+                >
+                  <EditIcon />
+                </span>
+              </Tooltip>
+              <Tooltip color="danger" content="Eliminar Extracto">
+                <span
+                  className="text-lg text-danger cursor-pointer active:opacity-50"
+                  onClick={() => handleDeleteClick(item)}
+                >
+                  <DeleteIcon />
+                </span>
+              </Tooltip>
+              <Tooltip color="success" content="Actualizar Extracto">
+                <span
+                  className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
+                  onClick={() => handleValidateClick(item)}
+                >
+                  <CheckIcon />
+                </span>
+              </Tooltip>
+            </div>
+          </td>
+        )}
+      </tr>
+    ));
+    
+  },[datos, editModes, filteredItems, isAdmin, list, openModal, tableIsUpload, token]);
+  
   return (
     <>
       {isAdmin && topContent}
@@ -266,110 +369,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
           </tr>
         </thead>
         <tbody>
-          {filteredItems.map((item, index) => (
-            <tr key={item.id + "_" + index + 1}>
-              <td>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="date"
-                  variant="bordered"
-                  defaultValue={item.date}
-                  className="max-w-xs"
-                  onBlur={(event) =>
-                    handleSelectField(event, item, column_date)
-                  }
-                />
-              </td>
-              <td>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="text"
-                  variant="bordered"
-                  defaultValue={item.name}
-                  className="max-w-xs"
-                  onBlur={(event) =>
-                    handleSelectField(event, item, column_description)
-                  }
-                />
-              </td>
-              <td>
-                <Select
-                  aria-labelledby={list.map((objeto) => objeto.name).join(",")}
-                  variant="bordered"
-                  items={list}
-                  placeholder={item.branchOffice.name}
-                  onChange={(event) =>
-                    handleSelectField(event, item, column_branchoffice)
-                  }
-                >
-                  {(sucursal) => (
-                    <SelectItem key={sucursal.id + "_" + index}>
-                      {sucursal.name}
-                    </SelectItem>
-                  )}
-                </Select>
-              </td>
-              <td>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="text"
-                  variant="bordered"
-                  defaultValue={item.detail}
-                  className="max-w-xs"
-                  onBlur={(event) =>
-                    handleSelectField(event, item, column_detail)
-                  }
-                />
-              </td>
-              <td>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="number"
-                  variant="bordered"
-                  defaultValue={item.balance}
-                  className="max-w-xs"
-                  startContent={
-                    <div className="pointer-events-none flex items-center">
-                      <span className="text-default-400 text-small">$</span>
-                    </div>
-                  }
-                  onBlur={(event) =>
-                    handleSelectField(event, item, column_balance)
-                  }
-                />
-              </td>
-              {isAdmin && (
-                <td>
-                  <div className="relative flex items-center gap-2">
-                    <Tooltip content="Editar Extracto">
-                      <span
-                        className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                        onClick={() => handleEditClick(index + 1)}
-                      >
-                        <EditIcon />
-                      </span>
-                    </Tooltip>
-                    <Tooltip color="danger" content="Eliminar Extracto">
-                      <span
-                        className="text-lg text-danger cursor-pointer active:opacity-50"
-                        onClick={() => handleDeleteClick(item)}
-                      >
-                        <DeleteIcon />
-                      </span>
-                    </Tooltip>
-                    <Tooltip color="success" content="Actualizar Extracto">
-                      <span
-                        className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
-                        onClick={() => handleValidateClick(item)}
-                      >
-                        <CheckIcon />
-                      </span>
-                    </Tooltip>
-                  </div>
-                </td>
-              )}
-            </tr>
-          ))}
+          {Extracts}
         </tbody>
       </table>
     </>

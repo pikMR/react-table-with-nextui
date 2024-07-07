@@ -1,5 +1,5 @@
 import React from "react";
-export const DeleteIcon = (props) => (
+const DeleteIcon = (props) => (
   <svg
     aria-hidden="true"
     fill="none"
@@ -47,3 +47,5 @@ export const DeleteIcon = (props) => (
     />
   </svg>
 );
+
+export default DeleteIcon;

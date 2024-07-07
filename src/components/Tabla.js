@@ -1,22 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { AddIcon } from "./icons/AddIcon";
-import { DeleteIcon } from "./icons/DeleteIcon";
-import { CheckIcon } from "./icons/CheckIcon";
-import { SearchIcon } from "./icons/SearchIcon";
-import { EditIcon } from "./icons/EditIcon";
-import { Select, SelectItem } from "@nextui-org/select";
-import { Tooltip } from "@nextui-org/tooltip";
+import { AddIcon, SearchIcon } from "./icons/Index";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { useGlobalState } from './GlobalState';
+import { ExtractItem } from './ExtractItem'
 import { putExtract, postExtract, deleteExtract } from "../service";
 
 const Tabla = ({ tableData, listData, idBank }) => {
-  const column_date = "date";
-  const column_description = "name";
-  const column_detail = "detail";
-  const column_balance = "balance"; 
-  const column_branchoffice = "branchOffice";
   const { openModal, tableIsUpload, token, isAdmin } = useGlobalState(); // Utilizamos el estado global
   const [filterValue, setFilterValue] = useState("");
   const [filterDate, setFilterDate] = useState("");
@@ -90,13 +80,6 @@ const Tabla = ({ tableData, listData, idBank }) => {
     );
   }, [listData, createDisabled, filterValue, onSearchChange, idBank, onClear]);
 
-  const handleEditClick = (rowKey) => {
-    setEditModes((prevEditModes) => ({
-      ...prevEditModes,
-      [rowKey]: !prevEditModes[rowKey], // Toggle edition
-    }));
-  };
-
   const filteredItems = useMemo(() => {
     console.log("filteredItems");
     let filteredExtracts = [...datos];
@@ -130,7 +113,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
       if (newValue) {
         const updateDatos = [...datos];
         const extracto = updateDatos.find((e) => e.id === item.id);
-        if (field === column_branchoffice) {
+        if (field === "branchOffice") {
           // select elements
           const splitNewValue = newValue.split("_")[0];
           if (extracto[field].id !== splitNewValue) {
@@ -149,8 +132,17 @@ const Tabla = ({ tableData, listData, idBank }) => {
         }
       }
     };
+
+    const handleEditClick = (rowKey) => {
+      console.log("🚀 handleEditClick", rowKey);
+      setEditModes((prevEditModes) => ({
+        ...prevEditModes,
+        [rowKey]: !prevEditModes[rowKey], // Toggle edition
+      }));
+    };
     
     const handleValidateClick = async (item) => {
+      console.log("🚀 handleValidateClick", item);
       try {
         if (!item.id) {
           await postExtract(token, item).then(async (result) => {
@@ -206,6 +198,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
     };
 
     const handleDeleteClick = async (item) => {
+      console.log("🚀 handleDeleteClick", item);
       try {
         if (!item.id) {
           openModal([
@@ -248,107 +241,22 @@ const Tabla = ({ tableData, listData, idBank }) => {
 
     return (
       <>
-        {filteredItems.map((item, index) => (
-          <tr key={item.id + "_" + index + 1}>
-            <td>
-              <Input
-                isReadOnly={!editModes[index + 1]}
-                type="date"
-                variant="bordered"
-                defaultValue={item.date}
-                className="max-w-xs"
-                onBlur={(event) => handleSelectField(event, item, column_date)}
-              />
-            </td>
-            <td>
-              <Input
-                isReadOnly={!editModes[index + 1]}
-                type="text"
-                variant="bordered"
-                defaultValue={item.name}
-                className="max-w-xs"
-                onBlur={(event) =>
-                  handleSelectField(event, item, column_description)
-                }
-              />
-            </td>
-            <td>
-              <Select
-                aria-labelledby={list.map((objeto) => objeto.name).join(",")}
-                variant="bordered"
-                items={list}
-                placeholder={item.branchOffice.name}
-                onChange={(event) =>
-                  handleSelectField(event, item, column_branchoffice)
-                }
-              >
-                {(sucursal) => (
-                  <SelectItem key={sucursal.id + "_" + index}>
-                    {sucursal.name}
-                  </SelectItem>
-                )}
-              </Select>
-            </td>
-            <td>
-              <Input
-                isReadOnly={!editModes[index + 1]}
-                type="text"
-                variant="bordered"
-                defaultValue={item.detail}
-                className="max-w-xs"
-                onBlur={(event) => handleSelectField(event, item, column_detail)}
-              />
-            </td>
-            <td>
-              <Input
-                isReadOnly={!editModes[index + 1]}
-                type="number"
-                variant="bordered"
-                defaultValue={item.balance}
-                className="max-w-xs"
-                startContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">$</span>
-                  </div>
-                }
-                onBlur={(event) => handleSelectField(event, item, column_balance)}
-              />
-            </td>
-            {isAdmin && (
-              <td>
-                <div className="relative flex items-center gap-2">
-                  <Tooltip content="Editar Extracto">
-                    <span
-                      className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                      onClick={() => handleEditClick(index + 1)}
-                    >
-                      <EditIcon />
-                    </span>
-                  </Tooltip>
-                  <Tooltip color="danger" content="Eliminar Extracto">
-                    <span
-                      className="text-lg text-danger cursor-pointer active:opacity-50"
-                      onClick={() => handleDeleteClick(item)}
-                    >
-                      <DeleteIcon />
-                    </span>
-                  </Tooltip>
-                  <Tooltip color="success" content="Actualizar Extracto">
-                    <span
-                      className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
-                      onClick={() => handleValidateClick(item)}
-                    >
-                      <CheckIcon />
-                    </span>
-                  </Tooltip>
-                </div>
-              </td>
-            )}
-          </tr>
+        {filteredItems.slice(0,20).map((item, index) => (
+          <ExtractItem
+            key={index}
+            id={index}
+            item={item}
+            handleSelectField={handleSelectField}
+            handleValidateClick={handleValidateClick}
+            handleDeleteClick={handleDeleteClick}
+            handleEditClick={handleEditClick}
+            editModes={editModes[index]}
+            list={list}
+          />
         ))}
       </>
     );
-  },[datos, editModes, filteredItems, isAdmin, list, openModal, tableIsUpload, token]);
+  },[datos, editModes, filteredItems, list, openModal, tableIsUpload, token]);
   
   return (
     <>

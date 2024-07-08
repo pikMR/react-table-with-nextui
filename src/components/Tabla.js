@@ -3,11 +3,11 @@ import { AddIcon, SearchIcon } from "./icons/Index";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { useGlobalState } from './GlobalState';
+import { deleteExtract } from "../service";
 import { ExtractItem } from './ExtractItem'
-import { putExtract, postExtract, deleteExtract } from "../service";
 
 const Tabla = ({ tableData, listData, idBank }) => {
-  const { openModal, tableIsUpload, token, isAdmin } = useGlobalState(); // Utilizamos el estado global
+  const { isAdmin, openModal, token, tableIsUpload } = useGlobalState();
   const [filterValue, setFilterValue] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [datos, setDatos] = useState(tableData);
@@ -42,6 +42,49 @@ const Tabla = ({ tableData, listData, idBank }) => {
     }
   }
 
+  const handleDeleteClick = async (item) => {
+    debugger;
+    console.log("🚀 handleDeleteClick", item);
+    try {
+      if (!item.id) {
+        openModal([
+          "opaque",
+          "Extracto Eliminado.",
+          "Se eliminó correctamente " + item.name,
+        ]);
+        const updateDatos = [...datos];
+        setDatos(updateDatos.filter((e) => e.id !== item.id));
+        setCreateDisabled(false);
+      } else {
+        await deleteExtract(token, item.id).then(async (result) => {
+          if (result.status) {
+            openModal([
+              "blur",
+              "Error en la eliminación del extracto.",
+              "No se eliminó correctamente " + item.name,
+            ]);
+          } else {
+            openModal([
+              "opaque",
+              "Extracto Eliminado.",
+              "Se eliminó correctamente " + item.name,
+            ]);
+            const updateDatos = [...datos];
+            setDatos(updateDatos.filter((e) => e.id !== item.id));
+            setCreateDisabled(false);
+            tableIsUpload();
+          }
+        });
+      }
+    } catch (err) {
+      openModal([
+        "blur",
+        "Error no esperado",
+        "Operación no aceptada " + item.name,
+      ]);
+    }
+  };
+
   const topContent = useMemo(() => {
     const handleNewExtracto = () => {
       const nuevoExtracto = {
@@ -52,7 +95,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
         detail: "",
         balance: 0,
       };
-      setCreateDisabled(true);
+
       setDatos((prevExtractos) => [...prevExtractos, nuevoExtracto]);
     };
 
@@ -62,7 +105,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
           color="primary"
           endContent={<AddIcon />}
           onClick={handleNewExtracto}
-          isDisabled={createDisabled}
+          isDisabled={false} // isDisabled vendrá de globalstate
         >
           Nuevo Extracto
         </Button>
@@ -77,7 +120,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
         />
       </div>
     );
-  }, [listData, createDisabled, filterValue, onSearchChange, idBank, onClear]);
+  }, [listData, filterValue, onSearchChange, idBank, onClear]);
 
   const filteredItems = useMemo(() => {
     console.log("filteredItems");
@@ -104,149 +147,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
 
     return filteredExtracts;
   }, [datos, filterValue, filterDate]);
- 
-  const Extracts = useMemo(() => {
-    const handleSelectField = (event, item, field) => {
-      console.log("🚀 handleSelectField", event, item, field);
-      const newValue = event.target.value;
-      if (newValue) {
-        const updateDatos = [...datos];
-        const extracto = updateDatos.find((e) => e.id === item.id);
-        if (field === "branchOffice") {
-          // select elements
-          const splitNewValue = newValue.split("_")[0];
-          if (extracto[field].id !== splitNewValue) {
-            extracto[field].id = splitNewValue;
-            extracto[field].name = list.find(
-              (x) => x.id === splitNewValue
-            ).name;
-            console.log("💨 select value ", splitNewValue);
-            setDatos(updateDatos);
-          }
-        } else if (extracto[field] !== newValue) {
-          // input elements
-          extracto[field] = newValue;
-          console.log("💨 input value ", extracto[field], newValue);
-          setDatos(updateDatos);
-        }
-      }
-    };
-
-    const handleValidateClick = async (item) => {
-      console.log("🚀 handleValidateClick", item);
-      try {
-        if (!item.id) {
-          await postExtract(token, item).then(async (result) => {
-            if (result.status) {
-              openModal([
-                "blur",
-                "Error en la creación del extracto.",
-                "No se creó correctamente " + item.name,
-              ]);
-            } else {
-              openModal([
-                "opaque",
-                "Extracto Creado",
-                "Se creó correctamente " + item.name,
-              ]);
-              const updateDatos = [...datos];
-              const extracto = updateDatos.find((e) => e.id === item.id);
-              const branchOfficeSelectedName = list.find(
-                (e) => e.id === extracto.branchOffice.id
-              ).name;
-              extracto.id = result;
-              extracto.branchOffice.name = branchOfficeSelectedName;
-              setCreateDisabled(false);
-              setDatos(updateDatos);
-              tableIsUpload();
-            }
-          });
-        } else {
-          await putExtract(token, item).then(async (result) => {
-            if (result.status) {
-              openModal([
-                "blur",
-                "Error en la actualización del extracto.",
-                "No se actualizó correctamente " + item.name,
-              ]);
-            } else {
-              openModal([
-                "opaque",
-                "Extracto Actualizado",
-                "Se actualizó correctamente " + item.name,
-              ]);
-              tableIsUpload();
-            }
-          });
-        }
-      } catch (err) {
-        openModal([
-          "blur",
-          "Error no esperado",
-          "Operación no aceptada " + item.name,
-        ]);
-      }
-    };
-
-    const handleDeleteClick = async (item) => {
-      console.log("🚀 handleDeleteClick", item);
-      try {
-        if (!item.id) {
-          openModal([
-            "opaque",
-            "Extracto Eliminado.",
-            "Se eliminó correctamente " + item.name,
-          ]);
-          const updateDatos = [...datos];
-          setDatos(updateDatos.filter((e) => e.id !== item.id));
-          setCreateDisabled(false);
-        } else {
-          await deleteExtract(token, item.id).then(async (result) => {
-            if (result.status) {
-              openModal([
-                "blur",
-                "Error en la eliminación del extracto.",
-                "No se eliminó correctamente " + item.name,
-              ]);
-            } else {
-              openModal([
-                "opaque",
-                "Extracto Eliminado.",
-                "Se eliminó correctamente " + item.name,
-              ]);
-              const updateDatos = [...datos];
-              setDatos(updateDatos.filter((e) => e.id !== item.id));
-              setCreateDisabled(false);
-              tableIsUpload();
-            }
-          });
-        }
-      } catch (err) {
-        openModal([
-          "blur",
-          "Error no esperado",
-          "Operación no aceptada " + item.name,
-        ]);
-      }
-    };
-
-    return (
-      <>
-        {filteredItems.slice(0,20).map((item, index) => (
-          <ExtractItem
-            key={index}
-            id={index}
-            item={item}
-            handleSelectField={handleSelectField}
-            handleValidateClick={handleValidateClick}
-            handleDeleteClick={handleDeleteClick}
-           list={list}
-          />
-        ))}
-      </>
-    );
-  },[datos, filteredItems, list, openModal, tableIsUpload, token]);
-  
+     
   return (
     <>
       {isAdmin && topContent}
@@ -269,7 +170,15 @@ const Tabla = ({ tableData, listData, idBank }) => {
           </tr>
         </thead>
         <tbody>
-            {Extracts}
+          {filteredItems.slice(0, 20).map((item, index) => (
+            <ExtractItem
+              key={index}
+              id={index}
+              item={item}
+              list={list}
+              handleDeleteClick={handleDeleteClick}
+            />
+          ))}
         </tbody>
       </table>
     </>

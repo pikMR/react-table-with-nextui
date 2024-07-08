@@ -10,7 +10,6 @@ const Tabla = ({ tableData, listData, idBank }) => {
   const { openModal, tableIsUpload, token, isAdmin } = useGlobalState(); // Utilizamos el estado global
   const [filterValue, setFilterValue] = useState("");
   const [filterDate, setFilterDate] = useState("");
-  const [editModes, setEditModes] = useState({});
   const [datos, setDatos] = useState(tableData);
   const [list, setList] = useState(listData);
   const [createDisabled, setCreateDisabled] = useState(false);
@@ -133,14 +132,6 @@ const Tabla = ({ tableData, listData, idBank }) => {
       }
     };
 
-    const handleEditClick = (rowKey) => {
-      console.log("🚀 handleEditClick", rowKey);
-      setEditModes((prevEditModes) => ({
-        ...prevEditModes,
-        [rowKey]: !prevEditModes[rowKey], // Toggle edition
-      }));
-    };
-    
     const handleValidateClick = async (item) => {
       console.log("🚀 handleValidateClick", item);
       try {
@@ -249,14 +240,12 @@ const Tabla = ({ tableData, listData, idBank }) => {
             handleSelectField={handleSelectField}
             handleValidateClick={handleValidateClick}
             handleDeleteClick={handleDeleteClick}
-            handleEditClick={handleEditClick}
-            editModes={editModes[index]}
-            list={list}
+           list={list}
           />
         ))}
       </>
     );
-  },[datos, editModes, filteredItems, list, openModal, tableIsUpload, token]);
+  },[datos, filteredItems, list, openModal, tableIsUpload, token]);
   
   return (
     <>

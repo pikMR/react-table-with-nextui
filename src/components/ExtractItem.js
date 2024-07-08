@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from "react";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Input } from "@nextui-org/input";
@@ -10,8 +10,6 @@ export const ExtractItem = ({
   handleSelectField,
   handleValidateClick,
   handleDeleteClick,
-  handleEditClick,
-  editModes,
   list,
 }) => {
   const column_date = "date";
@@ -19,6 +17,12 @@ export const ExtractItem = ({
   const column_detail = "detail";
   const column_balance = "balance";
   const column_branchoffice = "branchOffice";
+  const [editModes, setEditModes] = useState(false);
+  
+  const handleEditClick = () => {
+    console.log('handleEditClik!');
+    setEditModes((prevCheck) => !prevCheck);
+  };
 
   return (
     <tr key={id}>
@@ -95,7 +99,7 @@ export const ExtractItem = ({
           <Tooltip content="Editar Extracto">
             <span
               className="text-lg text-default-400 cursor-pointer active:opacity-50"
-              onClick={() => handleEditClick(id)}
+              onClick={() => handleEditClick()}
             >
               <EditIcon />
             </span>

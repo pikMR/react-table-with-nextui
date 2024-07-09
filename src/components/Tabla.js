@@ -7,7 +7,7 @@ import { deleteExtract } from "../service";
 import { ExtractItem } from './ExtractItem'
 
 const Tabla = ({ tableData, listData, idBank }) => {
-  const { isAdmin, openModal, token, tableIsUpload } = useGlobalState();
+  const { isAdmin, openModal, token } = useGlobalState();
   const [filterValue, setFilterValue] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [datos, setDatos] = useState(tableData);
@@ -43,7 +43,6 @@ const Tabla = ({ tableData, listData, idBank }) => {
   }
 
   const handleDeleteClick = async (item) => {
-    debugger;
     console.log("🚀 handleDeleteClick", item);
     try {
       if (!item.id) {
@@ -72,7 +71,6 @@ const Tabla = ({ tableData, listData, idBank }) => {
             const updateDatos = [...datos];
             setDatos(updateDatos.filter((e) => e.id !== item.id));
             setCreateDisabled(false);
-            tableIsUpload();
           }
         });
       }
@@ -105,7 +103,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
           color="primary"
           endContent={<AddIcon />}
           onClick={handleNewExtracto}
-          isDisabled={false} // isDisabled vendrá de globalstate
+          isDisabled={false} // TODO isDisabled vendrá de globalstate
         >
           Nuevo Extracto
         </Button>
@@ -172,7 +170,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
         <tbody>
           {filteredItems.slice(0, 20).map((item, index) => (
             <ExtractItem
-              key={index}
+              key={item.id}
               id={index}
               item={item}
               list={list}

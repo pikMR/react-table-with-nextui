@@ -14,8 +14,7 @@ export const ExtractItem = ({
 }) => {
 
   const { openModal, tableIsUpload, token } = useGlobalState();
-  const [editModes, setEditModes] = useState(false);
-  const [data, setData] = useState(item);
+  const [ editModes, setEditModes ] = useState(false);
 
   const handleEditClick = () => {
     console.log("handleEditClik!");
@@ -27,102 +26,89 @@ export const ExtractItem = ({
     console.log("💨 branchoffice select value ", newValue);
 
     const newBranchOffice = list.find((x) => x.id === newValue);
-    const { branchOffice } = data;
+    const { branchOffice } = item;
     if (branchOffice.id !== newValue) {
       branchOffice.id = newBranchOffice.id;
       branchOffice.name = newBranchOffice.name;
-      setData(data);
     }
   };
 
   const handleSelectDate = (event) => {
-    debugger;
     const newValue = event.target.value;
     console.log("💨 date select value ", newValue);
 
-    if (data.date !== newValue) {
-      data.date = newValue;
-      setData(data);
+    if (item.date !== newValue) {
+      item.date = newValue;
     }
   };
 
   const handleSelectDesc = (event) => {
-    debugger;
     const newValue = event.target.value;
     console.log("💨 description select value ", newValue);
 
-    if (data.name !== newValue) {
-      data.name = newValue;
-      setData(data);
+    if (item.name !== newValue) {
+      item.name = newValue;
     }
   };
 
   const handleSelectDetail = (event) => {
-    debugger;
     const newValue = event.target.value;
     console.log("💨 detail select value ", newValue);
 
-    if (data.detail !== newValue) {
-      data.detail = newValue;
-      setData(data);
+    if (item.detail !== newValue) {
+      item.detail = newValue;
     }
   };
 
   const handleSelectBalance = (event) => {
-    debugger;
     const newValue = event.target.value;
     console.log("💨 balance select value ", newValue);
 
-    if (data.balance !== newValue) {
-      data.balance = newValue;
-      setData(data);
+    if (item.balance !== newValue) {
+      item.balance = newValue;
     }
   };
 
   const handleValidateClick = async () => {
-    debugger;
     console.log("🚀 handleValidateClick");
     try {
-      if (!data.id) {
-        await postExtract(token, data).then(async (result) => {
+      if (!item.id) {
+        await postExtract(token, item).then(async (result) => {
           if (result.status) {
             openModal([
               "blur",
               "Error en la creación del extracto.",
-              "No se creó correctamente " + data.name,
+              "No se creó correctamente " + item.name,
             ]);
           } else {
             openModal([
               "opaque",
               "Extracto Creado",
-              "Se creó correctamente " + data.name,
+              "Se creó correctamente " + item.name,
             ]);
 
             const branchOfficeSelectedName = list.find(
-              (e) => e.id === data.branchOffice.id
+              (e) => e.id === item.branchOffice.id
             ).name;
 
-            data.id = result;
-            data.branchOffice.name = branchOfficeSelectedName;
-
-            setData(data);
+            item.id = result;
+            item.branchOffice.name = branchOfficeSelectedName;
             tableIsUpload();
-            // TODO enviamos evento para añadir al padre
           }
         });
       } else {
-        await putExtract(token, data).then(async (result) => {
+        await putExtract(token, item).then(async (result) => {
           if (result.status) {
             openModal([
               "blur",
               "Error en la actualización del extracto.",
-              "No se actualizó correctamente " + data.name,
+              "No se actualizó correctamente " + item.name,
             ]);
           } else {
             openModal([
               "opaque",
               "Extracto Actualizado",
-              "Se actualizó correctamente " + data.name,
+              "Se actualizó correctamente " + item.name,
             ]);
             tableIsUpload();
           }
@@ -132,7 +118,7 @@ export const ExtractItem = ({
       openModal([
         "blur",
         "Error no esperado",
-        "Operación no aceptada " + data.name,
+        "Operación no aceptada " + item.name,
       ]);
     }
   };
@@ -144,7 +130,7 @@ export const ExtractItem = ({
           isReadOnly={!editModes}
           type="date"
           variant="bordered"
-          defaultValue={data.date}
+          defaultValue={item.date}
           className="max-w-xs"
           onBlur={(event) => editModes && handleSelectDate(event)}
         />
@@ -155,7 +141,7 @@ export const ExtractItem = ({
           isDisabled={!editModes}
           type="text"
           variant="bordered"
-          defaultValue={data.name}
+          defaultValue={item.name}
           className="max-w-xs"
           onBlur={(event) => editModes && handleSelectDesc(event)}
         />
@@ -166,7 +152,7 @@ export const ExtractItem = ({
           variant="bordered"
           items={list}
           isDisabled={!editModes}
-          placeholder={data.branchOffice.name}
+          placeholder={item.branchOffice.name}
           onChange={(event) => editModes && handleSelectBranchOffice(event)}
         >
           {(sucursal) => (
@@ -180,7 +166,7 @@ export const ExtractItem = ({
           isDisabled={!editModes}
           type="text"
           variant="bordered"
-          defaultValue={data.detail}
+          defaultValue={item.detail}
           className="max-w-xs"
           onBlur={(event) => editModes && handleSelectDetail(event)}
         />
@@ -191,7 +177,7 @@ export const ExtractItem = ({
           isDisabled={!editModes}
           type="number"
           variant="bordered"
-          defaultValue={data.balance}
+          defaultValue={item.balance}
           className="max-w-xs"
           startContent={
             <div className="pointer-events-none flex items-center">

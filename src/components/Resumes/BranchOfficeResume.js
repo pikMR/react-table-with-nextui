@@ -6,10 +6,26 @@ import {
 } from "@nextui-org/card";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Divider } from "@nextui-org/divider";
+import { useGlobalState } from "../GlobalState";
 
 export const BranchOfficeResume = ({ branchOffice, balanceFinal }) => {
+  const { filterBranchOffice, filterbo } = useGlobalState();
+
   return (
-    <Card className="max-w-[400px]">
+    <Card
+      className={`${
+        filterbo === branchOffice.name ? "max-w-[400px]" : "max-w-[200px]"
+      }`}
+      isPressable
+      onPress={() =>
+        filterbo === branchOffice.name
+          ? filterBranchOffice("")
+          : filterBranchOffice(branchOffice.name)
+      }
+      style={{
+        border: filterbo === branchOffice.name ? "3px solid red" : "",
+      }}
+    >
       <Tooltip content={branchOffice.name} disableAnimation color="foreground">
         <CardHeader>
           <div

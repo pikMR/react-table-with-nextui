@@ -188,7 +188,7 @@ export const ExtractItem = ({
         />
       </td>
       <td>
-        <div className="relative flex items-center gap-2">
+        <div className="relative flex items-center">
           <Tooltip content="Editar Extracto">
             <span
               className="text-lg text-default-400 cursor-pointer active:opacity-50"
@@ -197,26 +197,29 @@ export const ExtractItem = ({
               <EditIcon />
             </span>
           </Tooltip>
-          {editModes &&
+          {editModes && (
             <>
-            <Tooltip color="danger" content="Eliminar Extracto">
-              <span
-                className="text-lg text-danger cursor-pointer active:opacity-50"
-                onClick={() => handleDeleteClick(item)}
-              >
-                <DeleteIcon />
-              </span>
-            </Tooltip>
-            <Tooltip color="success" content="Actualizar Extracto">
-              <span
-                className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
-                onClick={() => handleValidateClick()}
-              >
-                <CheckIcon />
-              </span>
+              <Tooltip color="success" content="Actualizar Extracto">
+                <span
+                  className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
+                  onClick={() => handleValidateClick()}
+                >
+                  <CheckIcon />
+                </span>
+              </Tooltip>
+              <Tooltip color="danger" content="Eliminar Extracto">
+                <span
+                  className="text-lg text-danger cursor-pointer active:opacity-50"
+                  onClick={() => handleDeleteClick(item)}
+                  style={{
+                    marginLeft: "auto",
+                  }}
+                >
+                  <DeleteIcon />
+                </span>
               </Tooltip>
             </>
-          }
+          )}
         </div>
       </td>
     </tr>

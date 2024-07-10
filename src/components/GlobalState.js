@@ -10,7 +10,11 @@ export const GlobalStateProvider = ({ children }) => {
   const [login, setLogin] = useState(false);
   const [token, setToken] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [filterbo, setFilterbo] = useState("");
 
+  const filterBranchOffice = (branchoffice) => {
+    setFilterbo(branchoffice);
+  }
   const openModal = (backdrop) =>
   {
       setBackdrop(backdrop);
@@ -48,11 +52,13 @@ export const GlobalStateProvider = ({ children }) => {
         login,
         token,
         isAdmin,
+        filterbo,
         openModal,
         closeModal,
         tableIsUpload,
         tableWaitingUpload,
         loginUser,
+        filterBranchOffice,
       }}
     >
       {children}

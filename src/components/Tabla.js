@@ -7,7 +7,7 @@ import { deleteExtract } from "../service";
 import { ExtractItem } from './ExtractItem'
 
 const Tabla = ({ tableData, listData, idBank }) => {
-  const { isAdmin, openModal, token } = useGlobalState();
+  const { isAdmin, openModal, token, filterbo } = useGlobalState();
   const [filterValue, setFilterValue] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [datos, setDatos] = useState(tableData);
@@ -94,7 +94,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
         balance: 0,
       };
 
-      setDatos((prevExtractos) => [...prevExtractos, nuevoExtracto]);
+      setDatos((prevExtractos) => [nuevoExtracto, ...prevExtractos]);
     };
 
     return (
@@ -103,7 +103,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
           color="primary"
           endContent={<AddIcon />}
           onClick={handleNewExtracto}
-          isDisabled={false} // TODO isDisabled vendrá de globalstate
+          isDisabled={createDisabled}
         >
           Nuevo Extracto
         </Button>
@@ -118,33 +118,34 @@ const Tabla = ({ tableData, listData, idBank }) => {
         />
       </div>
     );
-  }, [listData, filterValue, onSearchChange, idBank, onClear]);
+  }, [createDisabled, filterValue, onSearchChange, listData, idBank, onClear]);
 
   const filteredItems = useMemo(() => {
     console.log("filteredItems");
     let filteredExtracts = [...datos];
 
     if (filterDate.length > 0) {
-      filteredExtracts = filteredExtracts.filter(
-        (extract) => extract.date.includes(filterDate)
+      filteredExtracts = filteredExtracts.filter((extract) =>
+        extract.date.includes(filterDate)
       );
     }
 
     if (filterValue.length > 3) {
       filteredExtracts = filteredExtracts.filter(
         (extract) =>
-          extract.name
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
-          extract.branchOffice.name
-              .toLowerCase()
-              .includes(filterValue.toLowerCase()) ||
+          extract.name.toLowerCase().includes(filterValue.toLowerCase()) ||
           extract.detail.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
 
+    if (filterbo !== "") {
+      filteredExtracts = filteredExtracts.filter((extract) =>
+        extract.branchOffice.name.toLowerCase().includes(filterbo.toLowerCase())
+      );
+    }
+
     return filteredExtracts;
-  }, [datos, filterValue, filterDate]);
+  }, [datos, filterDate, filterValue, filterbo]);
      
   return (
     <>

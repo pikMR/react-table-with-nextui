@@ -19,6 +19,7 @@ export const Selectores = () => {
   const [listData, setListData] = useState([]);
   const [selected, setSelected] = useState("0");
   const [isLoaded, setIsLoaded] = useState(false);
+  
 
   const fetchBanks = useCallback(async () => {
     try {
@@ -42,7 +43,6 @@ export const Selectores = () => {
 
   const fetchExtracts = useCallback(async () => {
     try {
-      setIsLoaded(false);
       if (bank.id !== "") {
         await getExtractsByBank(token, bank.id).then(async (fetchExtract) => {
           setTableData(fetchExtract.extracts);
@@ -50,16 +50,16 @@ export const Selectores = () => {
       }
     } catch (error) {
       console.log("🐗 ~ fetchExtracts ~ error:", error);
-    } finally {
-      setIsLoaded(true);
     }
   }, [bank.id, token]);
 
   useEffect(() => {
+    setIsLoaded(false);
     if (login) {
       fetchBanks();
       fetchExtracts();
     }
+    setIsLoaded(true);
   }, [selected, fetchBanks, fetchExtracts, login]);
   
   const handleTabChange = (newSelected) => {

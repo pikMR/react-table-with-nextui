@@ -13,11 +13,12 @@ const Tabla = ({ tableData, listData, idBank }) => {
   const [datos, setDatos] = useState(tableData);
   const [list, setList] = useState(listData);
   const [createDisabled, setCreateDisabled] = useState(false);
+  const [loadedRows, setLoadedRows] = useState(50);
 
   useEffect(() => {
     if (tableData.length !== 0) {
       setDatos(tableData);
-      setList(listData); 
+      setList(listData);
     }
   }, [tableData, listData]);
 
@@ -33,14 +34,13 @@ const Tabla = ({ tableData, listData, idBank }) => {
     }
   }, []);
 
-  const handleSelectedDate = (event) =>
-  {
+  const handleSelectedDate = (event) => {
     if (event.target) {
       setFilterDate(event.target.value);
     } else {
       setFilterDate("");
     }
-  }
+  };
 
   const handleDeleteClick = async (item) => {
     console.log("🚀 handleDeleteClick", item);
@@ -146,7 +146,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
 
     return filteredExtracts;
   }, [datos, filterDate, filterValue, filterbo]);
-     
+
   return (
     <>
       {isAdmin && topContent}
@@ -169,7 +169,7 @@ const Tabla = ({ tableData, listData, idBank }) => {
           </tr>
         </thead>
         <tbody>
-          {filteredItems.slice(0, 20).map((item, index) => (
+          {filteredItems.slice(0, loadedRows).map((item, index) => (
             <ExtractItem
               key={item.id}
               id={index}
@@ -180,6 +180,16 @@ const Tabla = ({ tableData, listData, idBank }) => {
           ))}
         </tbody>
       </table>
+      <Button
+        isDisabled={loadedRows >= filteredItems.length}
+        color="primary"
+        endContent={<AddIcon />}
+        onClick={() => setLoadedRows((prevrows) => prevrows + 50)}
+      >
+        Cargar Más Datos{" "}
+        {loadedRows >= filteredItems.length ? filteredItems.length : loadedRows}{" "}
+        / {filteredItems.length}
+      </Button>
     </>
   );
 };

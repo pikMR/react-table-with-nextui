@@ -3,12 +3,11 @@ import Resume from "./Resumes/Resume";
 import { useEffect, useState, useCallback } from "react";
 import { Tabs, Tab } from "@nextui-org/tabs";
 import { Card, CardBody } from "@nextui-org/card";
-import { Skeleton } from "@nextui-org/skeleton";
 import { useGlobalState } from "./GlobalState";
 import { getBanks, getExtractsByBank, getBranchOffice } from "../service";
 
 export const Selectores = () => {
-  const { login, token } = useGlobalState();
+  const { login, token, filterBranchOffice } = useGlobalState();
   const [tabs, setTabs] = useState([]);
   const [bank, setBank] = useState({
     id: "",
@@ -18,9 +17,7 @@ export const Selectores = () => {
   const [tableData, setTableData] = useState([]);
   const [listData, setListData] = useState([]);
   const [selected, setSelected] = useState("0");
-  const [isLoaded, setIsLoaded] = useState(false);
   
-
   const fetchBanks = useCallback(async () => {
     try {
       if (bank.id === "") {
@@ -54,15 +51,14 @@ export const Selectores = () => {
   }, [bank.id, token]);
 
   useEffect(() => {
-    setIsLoaded(false);
     if (login) {
       fetchBanks();
       fetchExtracts();
     }
-    setIsLoaded(true);
   }, [selected, fetchBanks, fetchExtracts, login]);
   
   const handleTabChange = (newSelected) => {
+    filterBranchOffice("");
     setTableData([]);
     let nselected = Number(newSelected);
     setBank(tabs[nselected]);
@@ -80,22 +76,20 @@ export const Selectores = () => {
         >
           {tabs?.map((item, index) => (
             <Tab key={index} title={item.name}>
-              <Skeleton className="rounded-lg" isLoaded={isLoaded}>
                 <Card style={{ marginBottom: 10 }}>
                   <CardBody>
                     <Resume {...bank} />
                   </CardBody>
                 </Card>
-                <Card>
-                  <CardBody>
-                    <Tabla
-                      tableData={tableData}
-                      listData={listData}
-                      idBank={bank.id}
-                    ></Tabla>
-                  </CardBody>
-                </Card>
-              </Skeleton>
+              <Card>
+                <CardBody>
+                  <Tabla
+                    tableData={tableData}
+                    listData={listData}
+                    idBank={bank.id}
+                  ></Tabla>
+                </CardBody>
+              </Card>
             </Tab>
           ))}
         </Tabs>

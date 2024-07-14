@@ -170,13 +170,13 @@ const Tabla = ({ tableData, listData, idBank }) => {
         </thead>
         <tbody>
           {filteredItems.slice(0, loadedRows).map((item, index) => (
-            <ExtractItem
-              key={item.id}
-              id={index}
-              item={item}
-              list={list}
-              handleDeleteClick={handleDeleteClick}
-            />
+              <ExtractItem
+                key={item.id}
+                id={index}
+                item={item}
+                list={list}
+                handleDeleteClick={handleDeleteClick}
+              />
           ))}
         </tbody>
       </table>

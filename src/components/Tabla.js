@@ -2,14 +2,16 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { AddIcon, SearchIcon } from "./icons/Index";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
+import { DateRangePicker } from "@nextui-org/date-picker";
 import { useGlobalState } from './GlobalState';
 import { deleteExtract } from "../service";
 import { ExtractItem } from './ExtractItem'
 
+
 const Tabla = ({ tableData, listData, idBank }) => {
   const { isAdmin, openModal, token, filterbo } = useGlobalState();
   const [filterValue, setFilterValue] = useState("");
-  const [filterDate, setFilterDate] = useState("");
+  const [filterDate, setFilterDate] = useState([]);
   const [datos, setDatos] = useState(tableData);
   const [list, setList] = useState(listData);
   const [createDisabled, setCreateDisabled] = useState(false);
@@ -35,10 +37,14 @@ const Tabla = ({ tableData, listData, idBank }) => {
   }, []);
 
   const handleSelectedDate = (event) => {
-    if (event.target) {
-      setFilterDate(event.target.value);
+    let start = event.start;
+    let end = event.end;
+    if (event.start && event.end) {
+      let datestart = start.year + "-" + start.month + "-" + start.day;
+      let dateend = end.year + "-" + end.month + "-" + end.day;
+      setFilterDate([parseDate(datestart), parseDate(dateend)]);
     } else {
-      setFilterDate("");
+      setFilterDate([]);
     }
   };
 
@@ -83,6 +89,19 @@ const Tabla = ({ tableData, listData, idBank }) => {
     }
   };
 
+  function parseDate(dateStr) {
+    const [year, month, day] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  function parseDateExtract(extract) {
+    const [year, month, day] = extract.date.split("-").map(Number);
+    return {
+      ...extract,
+      date: new Date(year, month - 1, day),
+    };
+  }
+
   const topContent = useMemo(() => {
     const handleNewExtracto = () => {
       const nuevoExtracto = {
@@ -123,10 +142,16 @@ const Tabla = ({ tableData, listData, idBank }) => {
   const filteredItems = useMemo(() => {
     console.log("filteredItems");
     let filteredExtracts = [...datos];
-
+    
     if (filterDate.length > 0) {
+      const parsedToDate = filteredExtracts.map(parseDateExtract);
+      
+      let filterToDate = parsedToDate.filter((extract) => {
+        return extract.date >= filterDate[0] && extract.date <= filterDate[1];
+      });
+
       filteredExtracts = filteredExtracts.filter((extract) =>
-        extract.date.includes(filterDate)
+        filterToDate.some((filtered) => filtered.id === extract.id)
       );
     }
 
@@ -154,10 +179,9 @@ const Tabla = ({ tableData, listData, idBank }) => {
         <thead>
           <tr>
             <th>
-              <Input
-                variant="bordered"
-                type="month"
-                label="Filtrar por Fecha"
+              <DateRangePicker
+                label="rango extractos"
+                visibleMonths={2}
                 onChange={(event) => handleSelectedDate(event)}
               />
             </th>
@@ -170,13 +194,13 @@ const Tabla = ({ tableData, listData, idBank }) => {
         </thead>
         <tbody>
           {filteredItems.slice(0, loadedRows).map((item, index) => (
-              <ExtractItem
-                key={item.id}
-                id={index}
-                item={item}
-                list={list}
-                handleDeleteClick={handleDeleteClick}
-              />
+            <ExtractItem
+              key={item.id}
+              id={index}
+              item={item}
+              list={list}
+              handleDeleteClick={handleDeleteClick}
+            />
           ))}
         </tbody>
       </table>

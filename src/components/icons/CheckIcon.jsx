@@ -1,6 +1,6 @@
 import React from "react";
 
-export const CheckIcon = (props) => (
+const CheckIcon = (props) => (
     <svg
       fill="currentColor"
       viewBox="0 0 16 16"

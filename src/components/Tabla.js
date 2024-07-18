@@ -1,34 +1,26 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { AddIcon } from "./icons/AddIcon";
-import { DeleteIcon } from "./icons/DeleteIcon";
-import { CheckIcon } from "./icons/CheckIcon";
-import { SearchIcon } from "./icons/SearchIcon";
-import { EditIcon } from "./icons/EditIcon";
-import { Select, SelectItem } from "@nextui-org/select";
-import { Tooltip } from "@nextui-org/tooltip";
+import { AddIcon, SearchIcon } from "./icons/Index";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
+import { DateRangePicker } from "@nextui-org/date-picker";
 import { useGlobalState } from './GlobalState';
-import { putExtract, postExtract, deleteExtract } from "../service";
+import { deleteExtract } from "../service";
+import { ExtractItem } from './ExtractItem'
+
 
 const Tabla = ({ tableData, listData, idBank }) => {
-  const column_date = "date";
-  const column_description = "name";
-  const column_detail = "detail";
-  const column_balance = "balance"; 
-  const column_branchoffice = "branchOffice";
-  const { openModal, tableIsUpload, token, isAdmin } = useGlobalState(); // Utilizamos el estado global
+  const { isAdmin, openModal, token, filterbo } = useGlobalState();
   const [filterValue, setFilterValue] = useState("");
-  const [filterDate, setFilterDate] = useState("");
-  const [editModes, setEditModes] = useState({});
+  const [filterDate, setFilterDate] = useState([]);
   const [datos, setDatos] = useState(tableData);
   const [list, setList] = useState(listData);
   const [createDisabled, setCreateDisabled] = useState(false);
+  const [loadedRows, setLoadedRows] = useState(50);
 
   useEffect(() => {
     if (tableData.length !== 0) {
       setDatos(tableData);
-      setList(listData); 
+      setList(listData);
     }
   }, [tableData, listData]);
 
@@ -44,39 +36,71 @@ const Tabla = ({ tableData, listData, idBank }) => {
     }
   }, []);
 
-  const handleSelectedDate = (event) =>
-  {
-    if (event.target) {
-      setFilterDate(event.target.value);
+  const handleSelectedDate = (event) => {
+    let start = event.start;
+    let end = event.end;
+    if (event.start && event.end) {
+      let datestart = start.year + "-" + start.month + "-" + start.day;
+      let dateend = end.year + "-" + end.month + "-" + end.day;
+      setFilterDate([parseDate(datestart), parseDate(dateend)]);
     } else {
-      setFilterDate("");
-    }
-  }
-
-  const handleSelectField = (event, item, field) => {
-    console.log("🚀 handleSelectField", event, item, field);
-    const newValue = event.target.value;
-    if (newValue)
-    {
-      const updateDatos = [...datos];
-      const extracto = updateDatos.find((e) => e.id === item.id);
-      if (field === column_branchoffice) {
-        // select elements
-        const splitNewValue = newValue.split('_')[0];
-        if (extracto[field].id !== splitNewValue) {
-          extracto[field].id = splitNewValue;
-          extracto[field].name = list.find((x) => x.id === splitNewValue).name;
-          console.log("💨 select value ", splitNewValue);
-          setDatos(updateDatos);
-        }
-      } else if (extracto[field] !== newValue) {
-        // input elements
-        extracto[field] = newValue;
-        console.log("💨 input value ", extracto[field], newValue);
-        setDatos(updateDatos);
-      }
+      setFilterDate([]);
     }
   };
+
+  const handleDeleteClick = async (item) => {
+    console.log("🚀 handleDeleteClick", item);
+    try {
+      if (!item.id) {
+        openModal([
+          "opaque",
+          "Extracto Eliminado.",
+          "Se eliminó correctamente " + item.name,
+        ]);
+        const updateDatos = [...datos];
+        setDatos(updateDatos.filter((e) => e.id !== item.id));
+        setCreateDisabled(false);
+      } else {
+        await deleteExtract(token, item.id).then(async (result) => {
+          if (result.status) {
+            openModal([
+              "blur",
+              "Error en la eliminación del extracto.",
+              "No se eliminó correctamente " + item.name,
+            ]);
+          } else {
+            openModal([
+              "opaque",
+              "Extracto Eliminado.",
+              "Se eliminó correctamente " + item.name,
+            ]);
+            const updateDatos = [...datos];
+            setDatos(updateDatos.filter((e) => e.id !== item.id));
+            setCreateDisabled(false);
+          }
+        });
+      }
+    } catch (err) {
+      openModal([
+        "blur",
+        "Error no esperado",
+        "Operación no aceptada " + item.name,
+      ]);
+    }
+  };
+
+  function parseDate(dateStr) {
+    const [year, month, day] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  function parseDateExtract(extract) {
+    const [year, month, day] = extract.date.split("-").map(Number);
+    return {
+      ...extract,
+      date: new Date(year, month - 1, day),
+    };
+  }
 
   const topContent = useMemo(() => {
     const handleNewExtracto = () => {
@@ -88,8 +112,8 @@ const Tabla = ({ tableData, listData, idBank }) => {
         detail: "",
         balance: 0,
       };
-      setCreateDisabled(true);
-      setDatos((prevExtractos) => [...prevExtractos, nuevoExtracto]);
+
+      setDatos((prevExtractos) => [nuevoExtracto, ...prevExtractos]);
     };
 
     return (
@@ -113,136 +137,40 @@ const Tabla = ({ tableData, listData, idBank }) => {
         />
       </div>
     );
-  }, [listData, createDisabled, filterValue, onSearchChange, idBank, onClear]);
-
-  const handleEditClick = (rowKey) => {
-    setEditModes((prevEditModes) => ({
-      ...prevEditModes,
-      [rowKey]: !prevEditModes[rowKey], // Toggle edition
-    }));
-  };
-
-  const handleValidateClick = async (item) => {
-    try {
-      if (!item.id) {
-        await postExtract(token, item).then(async (result) => {
-          if (result.status) {
-            openModal([
-              "blur",
-              "Error en la creación del extracto.",
-              "No se creó correctamente " + item.name,
-            ]);
-          } else {
-            openModal([
-              "opaque",
-              "Extracto Creado",
-              "Se creó correctamente " + item.name,
-            ]);
-            const updateDatos = [...datos];
-            const extracto = updateDatos.find((e) => e.id === item.id);
-            const branchOfficeSelectedName = list.find(
-              (e) => e.id === extracto.branchOffice.id
-            ).name;
-            extracto.id = result;
-            extracto.branchOffice.name = branchOfficeSelectedName;
-            setCreateDisabled(false);
-            setDatos(updateDatos);
-            tableIsUpload();
-          }
-        });        
-      } else {
-        await putExtract(token, item).then(async (result) => {
-          if (result.status) {
-            openModal([
-              "blur",
-              "Error en la actualización del extracto.",
-              "No se actualizó correctamente " + item.name,
-            ]);  
-          } else {
-            openModal([
-              "opaque",
-              "Extracto Actualizado",
-              "Se actualizó correctamente " + item.name,
-            ]);
-            tableIsUpload();
-          }
-        });
-      }
-
-    } catch (err) {
-      openModal([
-        "blur",
-        "Error no esperado",
-        "Operación no aceptada " + item.name,
-      ]); 
-    }
-  };
-
-  const handleDeleteClick = async (item) => {
-    try {
-      if (!item.id) {
-        openModal([
-          "opaque",
-          "Extracto Eliminado.",
-          "Se eliminó correctamente " + item.name,
-        ]);
-        const updateDatos = [...datos];
-        setDatos(updateDatos.filter((e) => e.id !== item.id));  
-        setCreateDisabled(false);
-      } else {
-        await deleteExtract(token, item.id).then(async (result) => {
-          if (result.status) {
-            openModal([
-              "blur",
-              "Error en la eliminación del extracto.",
-              "No se eliminó correctamente " + item.name,
-            ]);
-          } else {
-            openModal([
-              "opaque",
-              "Extracto Eliminado.",
-              "Se eliminó correctamente " + item.name,
-            ]);
-            const updateDatos = [...datos];
-            setDatos(updateDatos.filter((e) => e.id !== item.id));
-            setCreateDisabled(false);
-            tableIsUpload();
-          }
-        });
-      }
-    } catch (err) {
-      openModal([
-        "blur",
-        "Error no esperado",
-        "Operación no aceptada " + item.name,
-      ]);
-    }
-  };
+  }, [createDisabled, filterValue, onSearchChange, listData, idBank, onClear]);
 
   const filteredItems = useMemo(() => {
+    console.log("filteredItems");
     let filteredExtracts = [...datos];
-
+    
     if (filterDate.length > 0) {
-      filteredExtracts = filteredExtracts.filter(
-        (extract) => extract.date.includes(filterDate)
+      const parsedToDate = filteredExtracts.map(parseDateExtract);
+      
+      let filterToDate = parsedToDate.filter((extract) => {
+        return extract.date >= filterDate[0] && extract.date <= filterDate[1];
+      });
+
+      filteredExtracts = filteredExtracts.filter((extract) =>
+        filterToDate.some((filtered) => filtered.id === extract.id)
       );
     }
 
     if (filterValue.length > 3) {
       filteredExtracts = filteredExtracts.filter(
         (extract) =>
-          extract.name
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
-          extract.branchOffice.name
-              .toLowerCase()
-              .includes(filterValue.toLowerCase()) ||
+          extract.name.toLowerCase().includes(filterValue.toLowerCase()) ||
           extract.detail.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
 
+    if (filterbo !== "") {
+      filteredExtracts = filteredExtracts.filter((extract) =>
+        extract.branchOffice.name.toLowerCase().includes(filterbo.toLowerCase())
+      );
+    }
+
     return filteredExtracts;
-  }, [datos, filterValue, filterDate]);
+  }, [datos, filterDate, filterValue, filterbo]);
 
   return (
     <>
@@ -251,10 +179,9 @@ const Tabla = ({ tableData, listData, idBank }) => {
         <thead>
           <tr>
             <th>
-              <Input
-                variant="bordered"
-                type="month"
-                label="Filtrar por Fecha"
+              <DateRangePicker
+                label="rango extractos"
+                visibleMonths={2}
                 onChange={(event) => handleSelectedDate(event)}
               />
             </th>
@@ -266,112 +193,27 @@ const Tabla = ({ tableData, listData, idBank }) => {
           </tr>
         </thead>
         <tbody>
-          {filteredItems.map((item, index) => (
-            <tr key={item.id + "_" + index + 1}>
-              <td>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="date"
-                  variant="bordered"
-                  defaultValue={item.date}
-                  className="max-w-xs"
-                  onBlur={(event) =>
-                    handleSelectField(event, item, column_date)
-                  }
-                />
-              </td>
-              <td>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="text"
-                  variant="bordered"
-                  defaultValue={item.name}
-                  className="max-w-xs"
-                  onBlur={(event) =>
-                    handleSelectField(event, item, column_description)
-                  }
-                />
-              </td>
-              <td>
-                <Select
-                  aria-labelledby={list.map((objeto) => objeto.name).join(",")}
-                  variant="bordered"
-                  items={list}
-                  placeholder={item.branchOffice.name}
-                  onChange={(event) =>
-                    handleSelectField(event, item, column_branchoffice)
-                  }
-                >
-                  {(sucursal) => (
-                    <SelectItem key={sucursal.id + "_" + index}>
-                      {sucursal.name}
-                    </SelectItem>
-                  )}
-                </Select>
-              </td>
-              <td>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="text"
-                  variant="bordered"
-                  defaultValue={item.detail}
-                  className="max-w-xs"
-                  onBlur={(event) =>
-                    handleSelectField(event, item, column_detail)
-                  }
-                />
-              </td>
-              <td>
-                <Input
-                  isReadOnly={!editModes[index + 1]}
-                  type="number"
-                  variant="bordered"
-                  defaultValue={item.balance}
-                  className="max-w-xs"
-                  startContent={
-                    <div className="pointer-events-none flex items-center">
-                      <span className="text-default-400 text-small">$</span>
-                    </div>
-                  }
-                  onBlur={(event) =>
-                    handleSelectField(event, item, column_balance)
-                  }
-                />
-              </td>
-              {isAdmin && (
-                <td>
-                  <div className="relative flex items-center gap-2">
-                    <Tooltip content="Editar Extracto">
-                      <span
-                        className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                        onClick={() => handleEditClick(index + 1)}
-                      >
-                        <EditIcon />
-                      </span>
-                    </Tooltip>
-                    <Tooltip color="danger" content="Eliminar Extracto">
-                      <span
-                        className="text-lg text-danger cursor-pointer active:opacity-50"
-                        onClick={() => handleDeleteClick(item)}
-                      >
-                        <DeleteIcon />
-                      </span>
-                    </Tooltip>
-                    <Tooltip color="success" content="Actualizar Extracto">
-                      <span
-                        className="whitespace-pre text-lg text-success cursor-pointer active:opacity-50"
-                        onClick={() => handleValidateClick(item)}
-                      >
-                        <CheckIcon />
-                      </span>
-                    </Tooltip>
-                  </div>
-                </td>
-              )}
-            </tr>
+          {filteredItems.slice(0, loadedRows).map((item, index) => (
+            <ExtractItem
+              key={item.id}
+              id={index}
+              item={item}
+              list={list}
+              handleDeleteClick={handleDeleteClick}
+            />
           ))}
         </tbody>
       </table>
+      <Button
+        isDisabled={loadedRows >= filteredItems.length}
+        color="primary"
+        endContent={<AddIcon />}
+        onClick={() => setLoadedRows((prevrows) => prevrows + 50)}
+      >
+        Cargar Más Datos{" "}
+        {loadedRows >= filteredItems.length ? filteredItems.length : loadedRows}{" "}
+        / {filteredItems.length}
+      </Button>
     </>
   );
 };

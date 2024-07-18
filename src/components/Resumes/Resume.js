@@ -18,8 +18,12 @@ const Resume = ({ id, openingBalance }) => {
         .reduce((accumulator, currentValue) => {
           return accumulator + currentValue;
         }, 0);
-
-      setResumes(fetchResume.resumes);
+        const sortedResumes = fetchResume.resumes
+          ?.slice()
+          .sort((a, b) =>
+            a.branchOffice.name?.localeCompare(b.branchOffice.name)
+          );
+      setResumes(sortedResumes);
       setTotal(sumTotal);
     });
   }, [id, token]);
@@ -28,6 +32,7 @@ const Resume = ({ id, openingBalance }) => {
     fetchData();
   }, [fetchData, tableIsUpload]);
 
+  
   return (
     <>
       <Card

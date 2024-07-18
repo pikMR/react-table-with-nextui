@@ -8,8 +8,7 @@ import {
 } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
 import { useGlobalState } from "./../GlobalState";
-import { EyeFilledIcon } from "../icons/EyeFilledIcon";
-import { EyeSlashFilledIcon } from "../icons/EyeSlashFilledIcon";
+import { EyeFilledIcon, EyeSlashFilledIcon } from "./../icons/Index";
 import { Input } from "@nextui-org/input";
 import { postLogin, getInfoLogin } from "../../service";
 

@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -62,15 +63,30 @@ code {
       font-weight: bold;
     }
   }
+  
+.result {
+  font-family: Arial;
+  font-weight: bold;
+  background:
+    linear-gradient(to top, #4caf50, #4caf50 10px, transparent 10px),
+    linear-gradient(to right, #c1ef8c, #c1ef8c 10px, transparent 10px),
+    linear-gradient(to bottom, #8bc34a, #8bc34a 10px, transparent 10px),
+    linear-gradient(to left, #009688, #009688 10px, transparent 10px);
+  background-origin: border-box;
+  
+  /* Flexbox properties */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  .result {
-    font-family: Arial;
-    font-weight: bold;
-    color: white;
-    background:
-      linear-gradient(to top, #4caf50, #4caf50 10px, transparent 10px),
-      linear-gradient(to right, #c1ef8c, #c1ef8c 10px, transparent 10px),
-      linear-gradient(to bottom, #8bc34a, #8bc34a 10px, transparent 10px),
-      linear-gradient(to left, #009688, #009688 10px, transparent 10px);
-    background-origin: border-box;
+.result .card-body {
+  /* Optional: set a specific width and height */
+  width: 50%;
+  height: 50%;
+  
+  /* Center content inside CardBody */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

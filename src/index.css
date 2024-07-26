@@ -3,77 +3,78 @@
 @tailwind utilities;
 
 body {
+  color: blue;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
 .Navbar {
   background-color: black;
-  color: white;
+  color: rgb(0, 255, 30);
   padding: 20px;
   margin-bottom: 10px;
 }
 
 .Navbar a {
   margin-left: 12px;
-  color: white;
+  color: rgb(1, 213, 255);
 }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    border-spacing: 0;
-    margin-top:10px;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-top: 10px;
+}
+th,
+td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #2a00fd;
+}
+th {
+  background-color: #c72b2b;
+  font-weight: bold;
+}
+/* Estilos para dispositivos pequeños */
+@media screen and (max-width: 600px) {
+  th,
+  td {
+    padding: 8px;
   }
-  th, td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+  /* Oculta la cabecera de la tabla en dispositivos pequeños */
+  thead {
   }
-  th {
-    background-color: #f2f2f2;
+  /* Muestra los datos de la tabla en columnas apiladas */
+  tr {
+    display: block;
+    border-bottom: 2px solid #fffb00;
+  }
+  td::before {
+    content: attr(data-label);
+    float: left;
     font-weight: bold;
   }
-  /* Estilos para dispositivos pequeños */
-  @media screen and (max-width: 600px) {
-    th, td {
-      padding: 8px;
-    }
-    /* Oculta la cabecera de la tabla en dispositivos pequeños */
-    thead {
-      display: none;
-    }
-    /* Muestra los datos de la tabla en columnas apiladas */
-    tr {
-      display: block;
-      border-bottom: 2px solid #ddd;
-    }
-    td::before {
-      content: attr(data-label);
-      float: left;
-      font-weight: bold;
-    }
-  }
-  
+}
+
 .result {
   font-family: Arial;
   font-weight: bold;
-  background:
-    linear-gradient(to top, #4caf50, #4caf50 10px, transparent 10px),
+  background: linear-gradient(to top, #4caf50, #4caf50 10px, transparent 10px),
     linear-gradient(to right, #c1ef8c, #c1ef8c 10px, transparent 10px),
     linear-gradient(to bottom, #8bc34a, #8bc34a 10px, transparent 10px),
     linear-gradient(to left, #009688, #009688 10px, transparent 10px);
   background-origin: border-box;
-  
+
   /* Flexbox properties */
   display: flex;
   justify-content: center;
@@ -84,7 +85,7 @@ code {
   /* Optional: set a specific width and height */
   width: 50%;
   height: 50%;
-  
+
   /* Center content inside CardBody */
   display: flex;
   justify-content: center;

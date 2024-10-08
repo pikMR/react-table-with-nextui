@@ -4,8 +4,9 @@
   "private": true,
   "dependencies": {
     "@nextui-org/button": "^2.0.34",
-    "@nextui-org/divider":"^2.0.28",
     "@nextui-org/card": "^2.0.31",
+    "@nextui-org/date-picker": "^2.1.2",
+    "@nextui-org/divider": "^2.0.28",
     "@nextui-org/input": "^2.2.2",
     "@nextui-org/modal": "^2.0.36",
     "@nextui-org/select": "^2.2.2",
@@ -14,7 +15,6 @@
     "@nextui-org/tabs": "^2.0.32",
     "@nextui-org/theme": "^2.2.6",
     "@nextui-org/tooltip": "^2.0.36",
-    "@nextui-org/date-picker":"^2.1.2",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "framer-motion": "^11.3.2",

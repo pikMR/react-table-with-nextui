@@ -2,92 +2,87 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  font-size: 0.76923vw;
+  font-family: BlinkMacSystemFont;
+  font-size: clamp(6px, 0.76923vw, 10px);
+  margin: 0;
+}
+@media print, screen and (max-width: 641px) {
+  html {
+    font-size: 1.5625vw;
+    font-size: clamp(6px, 1.5625vw, 10px);
+  }
+}
+
 body {
-  color: blue;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
+  box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
-.Navbar {
-  background-color: black;
-  color: rgb(0, 255, 30);
-  padding: 20px;
-  margin-bottom: 10px;
-}
-
-.Navbar a {
-  margin-left: 12px;
-  color: rgb(1, 213, 255);
-}
-
-table {
-  width: 100%;
+table, th, td {
   border-collapse: collapse;
-  border-spacing: 0;
-  margin-top: 10px;
+  padding: 10px;
 }
-th,
-td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #2a00fd;
-}
+
 th {
-  background-color: #c72b2b;
-  font-weight: bold;
-}
-/* Estilos para dispositivos pequeños */
-@media screen and (max-width: 600px) {
-  th,
-  td {
-    padding: 8px;
-  }
-  /* Oculta la cabecera de la tabla en dispositivos pequeños */
-  thead {
-  }
-  /* Muestra los datos de la tabla en columnas apiladas */
-  tr {
-    display: block;
-    border-bottom: 2px solid #fffb00;
-  }
-  td::before {
-    content: attr(data-label);
-    float: left;
-    font-weight: bold;
-  }
+  border: 2px solid white;
 }
 
-.result {
-  font-family: Arial;
-  font-weight: bold;
-  background: linear-gradient(to top, #4caf50, #4caf50 10px, transparent 10px),
-    linear-gradient(to right, #c1ef8c, #c1ef8c 10px, transparent 10px),
-    linear-gradient(to bottom, #8bc34a, #8bc34a 10px, transparent 10px),
-    linear-gradient(to left, #009688, #009688 10px, transparent 10px);
-  background-origin: border-box;
-
-  /* Flexbox properties */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.scrollbar-container-other::-webkit-scrollbar {
+  display: none;
 }
 
-.result .card-body {
-  /* Optional: set a specific width and height */
-  width: 50%;
-  height: 50%;
-
-  /* Center content inside CardBody */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.scrollbar-container::-webkit-scrollbar {
+  width: 5px; 
+  height: 20px;
 }
+
+/* Track */
+.scrollbar-container::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the track */
+}
+
+/* Handle */
+.scrollbar-container::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the scrollbar handle */
+}
+
+/* Handle on hover */
+.scrollbar-container::-webkit-scrollbar-thumb:hover {
+  cursor: pointer;
+  display: block;
+  background: #555; /* Color of the scrollbar handle when hovered */
+}
+
+.scrollbar-x-container::-webkit-scrollbar {
+  width: 20px; 
+  height: 5px;
+}
+
+/* Track */
+.scrollbar-x-container::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the track */
+}
+
+/* Handle */
+.scrollbar-x-container::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the scrollbar handle */
+}
+
+/* Handle on hover */
+.scrollbar-x-container::-webkit-scrollbar-thumb:hover {
+  cursor: pointer;
+  display: block;
+  background: #555; /* Color of the scrollbar handle when hovered */
+}
+

@@ -1,5 +1,3 @@
-import { DateRangePicker } from "@nextui-org/date-picker";
-import { divider } from "@nextui-org/theme";
 
 export const Tabla = () => {
   return (

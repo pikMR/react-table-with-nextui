@@ -1,18 +1,19 @@
 import React from "react";
-import { DateRangePicker } from "@nextui-org/date-picker";
+import { DateRangePicker } from "@nextui-org/react";
 
 const SearchDate = () => {
   return (
     <div className="flex w-full flex-wrap md:flex-nowrap gap-4 text-black">
       <DateRangePicker
         classNames={{
-          base: "text-[1.4rem] py-6 px-4 sm:w-[40rem] w-full",
+          base: "text-[1.6rem] sm:w-[40rem] w-full",
           label: "text-[1.4rem]",
-          input: "p-4 text-[1.4rem]",
-          inputWrapper: "p-4",
+          input: "text-[14px]",
+          innerWrapper: "h-fit",
+          inputWrapper: "px-6 py-4 max-h-auto h-fit",
           calendar: "w-fit flex justify-center p-4 text-[1.2rem] sm:text-[1rem]",
-          calendarContent: "border p-2 border-primary rounded-lg",
-          selectorIcon: "text-[1.6rem]",
+          calendarContent: "p-2 rounded-lg",
+          selectorIcon: "text-[1.6rem] w-[2rem] h-[2rem]",
         }}
         visibleMonths={2}
         pageBehavior="single"
@@ -20,8 +21,6 @@ const SearchDate = () => {
         size="lg"
         variant="flat"
         radius="full"
-        // label="Label..."
-        // labelPlacement="outside-left"
       />
     </div>
   )
